@@ -1,0 +1,29 @@
+server:
+  port: 8083
+
+spring:
+  cloud:
+    config:
+      enabled: false
+      import-check:
+        enabled: false
+        
+  application:
+    name: my-bill-service
+
+#   config:
+#     import: optional:configserver:http://localhost:8888
+
+  datasource:
+    url: jdbc:mariadb://localhost:3306/user_bill
+    username: root
+    password: 123456789
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
