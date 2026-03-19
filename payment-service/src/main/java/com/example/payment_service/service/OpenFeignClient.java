@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.payment_service.domain.dto.MyBillsResponseDTO;
+import com.example.payment_service.domain.dto.InvoiceResponse;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public interface OpenFeignClient {
 
     // 예: 오늘 발행 대상만 조회 (issueDay=오늘 날짜의 day-of-month)
     @GetMapping("/api/v1/my-bills/issue-targets")
-    List<MyBillsResponseDTO> getIssueTargets(
+    List<InvoiceResponse> getIssueTargets(
             @RequestParam("issueDay") int issueDay
     );
 
