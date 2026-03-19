@@ -3,6 +3,7 @@ package com.example.my_bill_service.invoice.service;
 import com.example.my_bill_service.invoice.dto.request.CreateInvoiceRequest;
 import com.example.my_bill_service.invoice.dto.request.UpdateInvoiceRequest;
 import com.example.my_bill_service.invoice.dto.response.InvoiceResponse;
+import com.example.my_bill_service.invoice.dto.response.NotificationTargetResponse;
 import com.example.my_bill_service.invoice.entity.InvoiceEntity;
 import com.example.my_bill_service.invoice.repository.InvoiceRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -129,5 +131,36 @@ public class InvoiceService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "반복 시작일은 필수입니다.");
             }
         }
+    }
+
+    // 알림 대상자 리스트
+    public List<NotificationTargetResponse> getNotificationTargets() {
+
+        LocalDate today = LocalDate.now();
+        int todayDay = today.getDayOfMonth();
+
+        List<InvoiceEntity> invoiceEntities = invoiceRepository.findAllByDeletedAtIsNull();
+
+        return invoiceEntities.stream()
+                        .filter(invoice -> {
+                            Integer dueDay = invoice.getDueDay();
+                            Integer notifyBefore = invoice.getNotifyBefore();
+
+                            if(dueDay == null || notifyBefore == null) return false;
+
+                            return dueDay - notifyBefore == todayDay;
+                        })
+                        .map(invoice -> {
+                            Integer dueDay = invoice.getDueDay();
+                            LocalDate dueDate = LocalDate.now().withDayOfMonth(dueDay);
+
+                            return NotificationTargetResponse.builder()
+                                    .userId(invoice.getUserId())
+                                    .invoiceId(invoice.getId())
+                                    .notifyBefore(invoice.getNotifyBefore())
+                                    .dueDate(dueDate)
+                                    .build();
+                        })
+                        .collect(Collectors.toList());
     }
 }

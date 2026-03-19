@@ -1,5 +1,10 @@
 package com.example.my_bill_service.invoice.controller;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,10 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.my_bill_service.invoice.dto.request.CreateInvoiceRequest;
 import com.example.my_bill_service.invoice.dto.request.UpdateInvoiceRequest;
+import com.example.my_bill_service.invoice.dto.response.NotificationTargetResponse;
 import com.example.my_bill_service.invoice.service.InvoiceService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -79,4 +86,11 @@ public class InvoiceController {
         invoiceService.delete(userId, invoiceId);
         return ResponseEntity.ok().build();
     }
+
+    // 알림 대상자 리스트
+    @GetMapping("/internal/notifications/targets")
+    public ResponseEntity<?> getNotificationTargets(){
+        return ResponseEntity.ok(invoiceService.getNotificationTargets());
+    }
+    
 }
