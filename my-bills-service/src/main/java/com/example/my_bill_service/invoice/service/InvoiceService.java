@@ -2,6 +2,7 @@ package com.example.my_bill_service.invoice.service;
 
 import com.example.my_bill_service.invoice.dto.request.CreateInvoiceRequest;
 import com.example.my_bill_service.invoice.dto.request.UpdateInvoiceRequest;
+import com.example.my_bill_service.invoice.dto.response.InvoiceResponse;
 import com.example.my_bill_service.invoice.entity.InvoiceEntity;
 import com.example.my_bill_service.invoice.repository.InvoiceRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,14 +47,19 @@ public class InvoiceService {
     }
 
     // 목록 조회
-    public List<InvoiceEntity> getList(Long userId) {
-        return invoiceRepository.findAllByUserIdAndDeletedAtIsNull(userId);
+    public List<InvoiceResponse> getList(Long userId) {
+        return invoiceRepository.findAllByUserIdAndDeletedAtIsNull(userId)
+                            .stream()
+                            .map(InvoiceResponse::from)
+                            .collect(Collectors.toList());
     }
 
     // 단건 조회
-    public InvoiceEntity getDetail(Long userId, Long invoiceId) {
-        return invoiceRepository.findByIdAndUserIdAndDeletedAtIsNull(invoiceId, userId)
-                .orElseThrow(() -> new RuntimeException("청구서를 찾을 수 없습니다.")); 
+    public InvoiceResponse getDetail(Long userId, Long invoiceId) {
+        InvoiceEntity invoiceEntity = invoiceRepository.findByIdAndUserIdAndDeletedAtIsNull(invoiceId, userId)
+                                                    .orElseThrow(() -> new RuntimeException("청구서를 찾을 수 없습니다.")); 
+        return InvoiceResponse.from(invoiceEntity);
+                
     }
 
     // update
