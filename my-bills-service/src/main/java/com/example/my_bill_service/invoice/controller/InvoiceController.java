@@ -1,6 +1,7 @@
 package com.example.my_bill_service.invoice.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,6 +59,16 @@ public class InvoiceController {
         @RequestBody UpdateInvoiceRequest updateInvoiceRequest
     ){
         invoiceService.update(userId, invoiceId, updateInvoiceRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    // delete
+    @DeleteMapping("/{invoiceId}")
+    public ResponseEntity<?> deleteInvoice(
+        @RequestHeader("X-USER-ID") Long userId,
+        @PathVariable("invoiceId") Long invoiceId
+    ){
+        invoiceService.delete(userId, invoiceId);
         return ResponseEntity.ok().build();
     }
 }

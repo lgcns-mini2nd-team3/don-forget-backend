@@ -59,4 +59,13 @@ public class InvoiceService {
 
         invoiceRepository.save(invoiceEntity);
     }
+
+    // delete
+    public void delete(Long userId, Long invoiceId){
+        InvoiceEntity invoiceEntity = invoiceRepository.findByIdAndUserIdAndDeletedAtIsNull(invoiceId, userId)
+                                                    .orElseThrow(() -> new RuntimeException("청구서를 찾을 수 없습니다."));
+
+        invoiceEntity.softDelete();
+        invoiceRepository.save(invoiceEntity);
+    }
 }
