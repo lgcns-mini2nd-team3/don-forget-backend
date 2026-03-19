@@ -15,16 +15,20 @@ import com.example.my_bill_service.invoice.dto.request.CreateInvoiceRequest;
 import com.example.my_bill_service.invoice.dto.request.UpdateInvoiceRequest;
 import com.example.my_bill_service.invoice.service.InvoiceService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/my-bills")
 @RequiredArgsConstructor
+@Tag(name = "My bill", description = "나의 청구서 관리 API")
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
 
     // 등록
+    @Operation(summary = "청구서 등록", description = "새로운 나의 청구서 등록")
     @PostMapping
     public ResponseEntity<?> createInvoice(
             @RequestHeader("X-USER-ID") Long userId,
@@ -35,6 +39,7 @@ public class InvoiceController {
     }
 
     // 목록 조회 
+    @Operation(summary = "청구서 목록 조회", description = "사용자의 청구서 목록 조회")
     @GetMapping
     public ResponseEntity<?> getMyBills(
             @RequestHeader("X-USER-ID") Long userId
@@ -43,6 +48,7 @@ public class InvoiceController {
     }
 
     // 단건 조회
+    @Operation(summary = "청구서 단건 조회", description = "청구서ID로 단건 조회")
     @GetMapping("/{invoiceId}")
     public ResponseEntity<?> getInvoiceDetail(
             @RequestHeader("X-USER-ID") Long userId,
@@ -52,6 +58,7 @@ public class InvoiceController {
     }
 
     // update
+    @Operation(summary = "청구서 수정", description = "기존 청구서 정보와 반복/알림 규칙 수정")
     @PatchMapping("/{invoiceId}")
     public ResponseEntity<?> updateInvoice(
         @RequestHeader("X-USER-ID") Long userId,
@@ -63,6 +70,7 @@ public class InvoiceController {
     }
 
     // delete
+    @Operation(summary = "청구서 삭제", description = "청구서 삭제(soft delete)")
     @DeleteMapping("/{invoiceId}")
     public ResponseEntity<?> deleteInvoice(
         @RequestHeader("X-USER-ID") Long userId,
