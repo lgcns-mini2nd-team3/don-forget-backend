@@ -1,0 +1,28 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: external-billing-service
+  
+  # 로컬 테스트용 H2 DB 연결 설정
+  datasource:
+    url: jdbc:h2:mem:external_billing_db
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  jpa:
+    hibernate:
+      ddl-auto: update # 외부 고지서 원천 데이터 아카이빙 테이블 자동 갱신
+    show-sql: true
+  
+  cloud:
+    config:
+      # 로컬 단독 테스트를 위해 false로 설정
+      enabled: false
+
+# 나중에 설정 서버를 켤 때를 대비한 예비 설정
+# config:
+#   import: "optional:configserver:http://localhost:8888"
+#   fail-fast: true
