@@ -11,6 +11,7 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 
 import io.jsonwebtoken.Claims;
@@ -28,10 +29,12 @@ public class JwtAuthentication implements GlobalFilter {
     private Key key;
     // token 검증없이 통과하는 endpoint 등록
     private static final List<String> WHITE_LIST_PATHS = List.of(
-        "/users/signin",
-        "/health/alive",
-        "/product/list"
+        "/api/v1/**",
+        "/health/alive"
     );
+
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+
     @PostConstruct 
     private void init(){
         System.out.println(">>>> Provider jwt secret : " + secret);
@@ -55,9 +58,16 @@ public class JwtAuthentication implements GlobalFilter {
         System.out.println(">>> JwtAuthenticationFilter User Method : " + method);
         
         // 만약 엔드포인트가 화이트 리스트에 포함되어 있다면, 토큰 검증 없이 요청이 필터 통과 
-        if(WHITE_LIST_PATHS.contains(endPoint)){
-            System.out.println(">>> JwtAuthenticationFilter filter WHITE_LIST_PATH pass : " + endPoint);
-            return chain.filter(exchange);
+        // if(WHITE_LIST_PATHS.contains(endPoint)){
+        //     System.out.println(">>> JwtAuthenticationFilter filter WHITE_LIST_PATH pass : " + endPoint);
+        //     return chain.filter(exchange);
+        // }
+
+        for (String whiteListPath : WHITE_LIST_PATHS) {
+            if (pathMatcher.match(whiteListPath, endPoint)) {
+                System.out.println(">>> JwtAuthenticationFilter WHITE_LIST_PATH pass : " + endPoint);
+                return chain.filter(exchange);
+            }
         }
 
         try {

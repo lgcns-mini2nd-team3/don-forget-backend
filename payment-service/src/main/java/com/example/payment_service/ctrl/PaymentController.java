@@ -21,21 +21,20 @@ public class PaymentController {
      * 특정 사용자의 납부 리스트 조회
      * GET /api/v1/{user_id}/payments
      */
-    @GetMapping("/{user_id}/payments")
-    public ResponseEntity<List<PayResponseDTO>> getPaymentsByUser(
-            @PathVariable("user_id") Long userId,
-            @RequestParam(name = "status", required = false) PaymentStatus status) {
-        List<PayResponseDTO> result = paymentService.findPaymentsByUser(userId, status);
+    // @GetMapping("/payments/{user_id}")
+    // public ResponseEntity<List<PayResponseDTO>> getPaymentsByUser(
+    //         @PathVariable("user_id") Long userId) {
+    //     List<PayResponseDTO> result = paymentService.findPaymentsByUser(userId);
         
-        return ResponseEntity.ok(result);
-    }
+    //     return ResponseEntity.ok(result);
+    // }
 
     /**
      * 납부 상세 조회
-     * GET /api/v1/payments/{id}
+     * GET /api/v1/payments/read/{payment_id}
      */
-    @GetMapping("/payments/{id}")
-    public ResponseEntity<PayResponseDTO> getPayment(@PathVariable("id") Long paymentId) {
+    @GetMapping("/payments/read/{payment_id}")
+    public ResponseEntity<PayResponseDTO> getPayment(@PathVariable("payment_id") Long paymentId) {
         PayResponseDTO result = paymentService.findById(paymentId);
         return ResponseEntity.ok(result);
     }

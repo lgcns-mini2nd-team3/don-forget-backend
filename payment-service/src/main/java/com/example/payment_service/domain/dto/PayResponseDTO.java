@@ -4,12 +4,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.example.payment_service.domain.entity.Payment;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.ToString;
 
 @Builder
 @ToString
+@Getter
 public class PayResponseDTO {
     private Long paymentId;
     private Long userInvoiceId;
