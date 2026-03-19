@@ -2,6 +2,7 @@ package com.example.my_bill_service.invoice.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -30,11 +31,20 @@ public class InvoiceController {
         return ResponseEntity.ok().build();
     }
 
-    // 조회 👈 여기!!
+    // 목록 조회 
     @GetMapping
     public ResponseEntity<?> getMyBills(
             @RequestHeader("X-USER-ID") Long userId
     ) {
         return ResponseEntity.ok(invoiceService.getList(userId));
+    }
+
+    // 단건 조회
+    @GetMapping("/{invoiceId}")
+    public ResponseEntity<?> getInvoiceDetail(
+            @RequestHeader("X-USER-ID") Long userId,
+            @PathVariable("invoiceId") Long invoiceId
+    ) {
+        return ResponseEntity.ok(invoiceService.getDetail(userId, invoiceId));
     }
 }
