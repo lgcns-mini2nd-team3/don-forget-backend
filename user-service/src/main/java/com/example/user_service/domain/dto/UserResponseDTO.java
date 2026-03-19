@@ -15,15 +15,14 @@ import lombok.ToString;
 @NoArgsConstructor
 public class UserResponseDTO {
     
-    private String userId;
-    private String email, name, role;
+    private Long userId;
+    private String email, name;
 
-    public UserResponseDTO fromEntity(UserEntity entity){
+    public static UserResponseDTO fromEntity(UserEntity entity){
         return UserResponseDTO.builder()
                                 .userId(entity.getUserId())
                                 .email(entity.getEmail())
                                 .name(entity.getName())
-                                .role(entity.getRole())
                                 .build();
 
     }

@@ -37,7 +37,7 @@ public class JwtProvider {
         return Jwts.builder()
                     .setSubject(email)
                     .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+                    .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY))
                     .signWith(getStringKey())
                     .compact();
     }
@@ -48,7 +48,7 @@ public class JwtProvider {
         return Jwts.builder()
                     .setSubject(email)
                     .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+                    .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRY))
                     .signWith(getStringKey())
                     .compact();
     }

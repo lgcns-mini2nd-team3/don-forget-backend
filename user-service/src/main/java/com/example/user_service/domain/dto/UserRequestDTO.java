@@ -17,11 +17,13 @@ public class UserRequestDTO {
     
     private String email;
     private String password;
+    private String name;
 
     public UserEntity toEntity(){
         return UserEntity.builder()
                         .email(this.email)
                         .password(this.password)
+                        .name(this.name)
                         .build();
     }
 }
