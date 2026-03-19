@@ -15,7 +15,7 @@ import lombok.ToString;
 @Getter
 public class PayResponseDTO {
     private Long paymentId;
-    private Long userInvoiceId;
+    private Long invoiceId;
     private String status;
     private BigDecimal amount;
     private LocalDateTime paidAt;
@@ -25,7 +25,7 @@ public class PayResponseDTO {
     public static PayResponseDTO fromEntity(Payment payment) {
         return PayResponseDTO.builder()
                 .paymentId(payment.getPaymentId())
-                .userInvoiceId(payment.getUserInvoiceId())
+                .invoiceId(payment.getInvoiceId())
                 .status(payment.getStatus().name())
                 .amount(payment.getAmount())
                 .paidAt(payment.getPaidAt())
