@@ -44,19 +44,19 @@ public class PaymentController {
      * PATCH /api/v1/payments/{id}/paid
      * Request body 없음 (서버에서 paidAt=now 처리)
      */
-    @PatchMapping("/payments/{id}/paid")
-    public ResponseEntity<PayResponseDTO> markPaid(@PathVariable("id") Long paymentId) {
+    @PatchMapping("/payments/{payment_id}/paid")
+    public ResponseEntity<PayResponseDTO> markPaid(@PathVariable("payment_id") Long paymentId) {
         PayResponseDTO result = paymentService.markPaid(paymentId);
         return ResponseEntity.ok(result);
     }
 
     /**
      * 체크리스트: 납부 완료 체크 해제
-     * PATCH /api/v1/payments/{id}/unpaid
+     * PATCH /api/v1/payments/{payment_id}/unpaid
      * Request body 없음 (서버에서 paidAt=null 처리)
      */
-    @PatchMapping("/payments/{id}/unpaid")
-    public ResponseEntity<PayResponseDTO> markUnpaid(@PathVariable("id") Long paymentId) {
+    @PatchMapping("/payments/{payment_id}/unpaid")
+    public ResponseEntity<PayResponseDTO> markUnpaid(@PathVariable("payment_id") Long paymentId) {
         PayResponseDTO result = paymentService.markUnpaid(paymentId);
         return ResponseEntity.ok(result);
     }
