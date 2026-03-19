@@ -21,13 +21,13 @@ public class PaymentController {
      * 특정 사용자의 납부 리스트 조회
      * GET /api/v1/{user_id}/payments
      */
-    // @GetMapping("/payments/{user_id}")
-    // public ResponseEntity<List<PayResponseDTO>> getPaymentsByUser(
-    //         @PathVariable("user_id") Long userId) {
-    //     List<PayResponseDTO> result = paymentService.findPaymentsByUser(userId);
+    @GetMapping("/payments/{user_id}")
+    public ResponseEntity<List<PayResponseDTO>> getPaymentsByUser(
+            @PathVariable("user_id") Long userId) {
+        List<PayResponseDTO> result = paymentService.findPaymentsByUser(userId);
         
-    //     return ResponseEntity.ok(result);
-    // }
+        return ResponseEntity.ok(result);
+    }
 
     /**
      * 납부 상세 조회
