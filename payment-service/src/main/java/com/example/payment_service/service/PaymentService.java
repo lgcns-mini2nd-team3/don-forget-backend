@@ -59,6 +59,28 @@ public class PaymentService {
         payment.update(PaymentStatus.PENDING);
         return PayResponseDTO.fromEntity(payment);
     }
+
+    /**
+     * 외부 고지서 데이터 연동 전용 메서드
+     */
+    @Transactional
+    public void registerExternalBilling(Long invoiceId, java.math.BigDecimal amount, LocalDate dueDate) {
+        // 중복 생성 방지 체크
+        if (paymentRepository.existsByInvoiceIdAndDueDate(invoiceId, dueDate)) {
+            System.out.println("PaymentService: External billing already exists for invoiceId: " + invoiceId);
+            return;
+        }
+
+        Payment payment = new Payment(
+                invoiceId,
+                dueDate,
+                amount,
+                PaymentStatus.PENDING
+        );
+
+        paymentRepository.save(payment);
+        System.out.println("✅ 외부 연동 데이터 저장 완료: InvoiceID " + invoiceId);
+    }
     
     @Transactional
     public void issuePaymentsForToday(LocalDate today) {
