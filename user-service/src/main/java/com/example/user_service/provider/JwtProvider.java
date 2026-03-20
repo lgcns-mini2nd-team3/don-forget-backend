@@ -59,12 +59,29 @@ public class JwtProvider {
         if(token.startsWith("Bearer ")){
             token = token.substring(7);
         }
-        Claims claims = Jwts.parser()
+        Claims claims = Jwts.parserBuilder()
                             .setSigningKey(getStringKey())
+                            .build()
                             .parseClaimsJws(token)
                             .getBody();
 
         return claims.getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+
+            Jwts.parser()
+                    .setSigningKey(getStringKey())
+                    .parseClaimsJws(token);
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 
@@ -74,4 +91,7 @@ public class JwtProvider {
     public long getRte() {
         return REFRESH_TOKEN_EXPIRY;
     }
+
+   
+
 }
