@@ -1,5 +1,7 @@
 package com.example.notification_service.dto;
 
+import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +13,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BillTargetResponse {
     private Long userId;
-    private Long paymentId;
-    private String billName; // 고지서 이름 (예: 전기세)
-    private int notifyBefore; // D-N일
+    private Long invoiceId;
+    private Long templateId;
+    private String billName;
+    private LocalDate dueDate;
+    private Integer notifyBefore;
 }
