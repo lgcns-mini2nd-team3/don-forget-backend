@@ -36,7 +36,7 @@ public class InvoiceEntity extends BaseEntity {
     @Column(name = "template_id", nullable = false)
     private Long templateId;
 
-    @Column(name = "bill_template_name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "amount")
@@ -65,13 +65,15 @@ public class InvoiceEntity extends BaseEntity {
     private Integer notifyBefore;
 
     @Builder
-    public InvoiceEntity(Long userId, Long templateId, Integer amount, Integer dueDay,
+    public InvoiceEntity(Long userId, Long templateId, String name, Integer amount, Integer dueDay, Integer issueDay,
                    Boolean isRecurring, RecurrenceCycle recurCycle,
                    LocalDate recurStart, LocalDate recurEnd, Integer notifyBefore) {
         this.userId = userId;
         this.templateId = templateId;
+        this.name = name;
         this.amount = amount;
         this.dueDay = dueDay;
+        this.issueDay = issueDay;
         this.isRecurring = isRecurring;
         this.recurCycle = recurCycle;
         this.recurStart = recurStart;
@@ -79,11 +81,13 @@ public class InvoiceEntity extends BaseEntity {
         this.notifyBefore = notifyBefore;
     }
 
-    public void update(Integer amount, Integer dueDay, Boolean isRecurring,
+    public void update(String name, Integer amount, Integer dueDay, Integer issueDay, Boolean isRecurring,
                        RecurrenceCycle recurCycle, LocalDate recurStart,
                        LocalDate recurEnd, Integer notifyBefore) {
+        this.name = name;
         this.amount = amount;
         this.dueDay = dueDay;
+        this.issueDay = issueDay;
         this.isRecurring = isRecurring;
         this.recurCycle = recurCycle;
         this.recurStart = recurStart;

@@ -12,12 +12,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Schema(description = "청구서 수정 요청 DTO")
 public class UpdateInvoiceRequest {
+
+    @Schema(description = "이름", example = "청구서명")
+    private String name;
     
     @Schema(description = "금액", example = "480000")
     private Integer amount;
 
     @Schema(description = "납부일", example = "25")
     private Integer dueDay;
+
+    @Schema(description  = "발행일", example = "20")
+    private Integer issueDay;
 
     @Schema(description = "반복 여부", example = "true")
     private Boolean isRecurring;

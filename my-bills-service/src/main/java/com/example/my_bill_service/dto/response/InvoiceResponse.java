@@ -19,8 +19,8 @@ public class InvoiceResponse {
 
     @Schema(description = "템플릿 ID", example = "1")
     private Long templateId;
-    
-    @Schema(description = "템플릿 name", example = "가스비")
+
+    @Schema(description = "이름", example = "청구서명")
     private String name;
     
     @Schema(description = "금액", example = "480000")
@@ -28,8 +28,9 @@ public class InvoiceResponse {
     
     @Schema(description = "납부일", example = "25")
     private Integer dueDay;
-    
-    private Integer issueDay; // 수근님 추가 부분
+
+    @Schema(description = "발행일", example = "20")
+    private Integer issueDay;
     
     @Schema(description = "반복 여부", example = "true")
     private Boolean isRecurring;
@@ -53,7 +54,7 @@ public class InvoiceResponse {
                 .name(entity.getName())
                 .amount(entity.getAmount())
                 .dueDay(entity.getDueDay())
-                .issueDay(entity.getIssueDay()) // 수근님 추가 부분
+                .issueDay(entity.getIssueDay())
                 .isRecurring(entity.getIsRecurring())
                 .recurCycle(entity.getRecurCycle())
                 .recurStart(entity.getRecurStart())

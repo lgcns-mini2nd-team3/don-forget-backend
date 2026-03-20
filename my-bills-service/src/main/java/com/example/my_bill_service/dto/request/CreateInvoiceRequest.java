@@ -13,12 +13,18 @@ public class CreateInvoiceRequest {
 
     @Schema(description = "청구서 템플릿 ID", example = "1")
     private Long templateId;
+
+    @Schema(description = "이름", example = "청구서명")
+    private String name;
     
     @Schema(description = "금액", example = "42000")
     private Integer amount;
     
     @Schema(description = "납부일", example = "25")
     private Integer dueDay;
+
+    @Schema(description  = "발행일", example = "20")
+    private Integer issueDay;
     
     @Schema(description = "반복 여부", example = "true")
     private Boolean isRecurring;

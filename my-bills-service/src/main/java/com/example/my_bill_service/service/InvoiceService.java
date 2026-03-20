@@ -28,7 +28,9 @@ public class InvoiceService {
     // 등록
     public void create(Long userId, CreateInvoiceRequest createInvoiceRequest) {
         validateInvoiceRequest(
+                createInvoiceRequest.getName(),
                 createInvoiceRequest.getDueDay(),
+                createInvoiceRequest.getIssueDay(),
                 createInvoiceRequest.getNotifyBefore(),
                 createInvoiceRequest.getIsRecurring(),
                 createInvoiceRequest.getRecurCycle(),
@@ -39,8 +41,10 @@ public class InvoiceService {
         InvoiceEntity invoice = InvoiceEntity.builder()
                 .userId(userId)
                 .templateId(createInvoiceRequest.getTemplateId())
+                .name(createInvoiceRequest.getName())
                 .amount(createInvoiceRequest.getAmount())
                 .dueDay(createInvoiceRequest.getDueDay())
+                .issueDay(createInvoiceRequest.getIssueDay())
                 .isRecurring(createInvoiceRequest.getIsRecurring())
                 .recurCycle(createInvoiceRequest.getRecurCycle())
                 .recurStart(createInvoiceRequest.getRecurStart())
@@ -74,8 +78,10 @@ public class InvoiceService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "청구서를 찾을 수 없습니다."));
 
         validateInvoiceRequest(
+                updateInvoiceRequest.getName(),
                 updateInvoiceRequest.getDueDay(),
                 updateInvoiceRequest.getNotifyBefore(),
+                updateInvoiceRequest.getIssueDay(),
                 updateInvoiceRequest.getIsRecurring(),
                 updateInvoiceRequest.getRecurCycle(),
                 updateInvoiceRequest.getRecurStart(),
@@ -83,8 +89,10 @@ public class InvoiceService {
         );
 
         invoiceEntity.update(
+                updateInvoiceRequest.getName(),
                 updateInvoiceRequest.getAmount(),
                 updateInvoiceRequest.getDueDay(),
+                updateInvoiceRequest.getIssueDay(),
                 updateInvoiceRequest.getIsRecurring(),
                 updateInvoiceRequest.getRecurCycle(),
                 updateInvoiceRequest.getRecurStart(),
@@ -153,9 +161,11 @@ public class InvoiceService {
                 .collect(Collectors.toList());
     }
 
-    // 공통 검증
+    // 공통 검증  TODO: name, issueday 검증 추가
     private void validateInvoiceRequest(
+            String name,
             Integer dueDay,
+            Integer issueDay,
             Integer notifyBefore,
             Boolean isRecurring,
             Object recurCycle,

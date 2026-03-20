@@ -16,6 +16,9 @@ public class NotificationTargetResponse {
 
     @Schema(description = "청구서 ID", example = "10")
     private Long invoiceId;
+
+    @Schema(description = "이름", example = "청구서명")
+    private String name;
     
     @Schema(description = "이번 회차 실제 납부 예정일", example = "2026-03-25")
     private LocalDate dueDate;
