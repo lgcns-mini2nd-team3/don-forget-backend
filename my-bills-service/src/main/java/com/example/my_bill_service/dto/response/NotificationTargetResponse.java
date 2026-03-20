@@ -1,4 +1,4 @@
-package com.example.my_bill_service.invoice.dto.response;
+package com.example.my_bill_service.dto.response;
 
 import java.time.LocalDate;
 

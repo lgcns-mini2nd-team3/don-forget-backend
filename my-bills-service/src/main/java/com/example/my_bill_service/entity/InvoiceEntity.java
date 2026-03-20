@@ -1,5 +1,6 @@
 package com.example.my_bill_service.entity;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 
 import com.example.my_bill_service.global.common.BaseEntity;
@@ -34,6 +35,9 @@ public class InvoiceEntity extends BaseEntity {
 
     @Column(name = "template_id", nullable = false)
     private Long templateId;
+
+    @Column(name = "bill_template_name")
+    private String name;
 
     @Column(name = "amount")
     private Integer amount;
