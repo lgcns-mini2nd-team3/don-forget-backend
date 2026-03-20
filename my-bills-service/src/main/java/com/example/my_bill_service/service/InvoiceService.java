@@ -132,12 +132,12 @@ public class InvoiceService {
 
     // 알림 대상자 리스트
     @Transactional(readOnly = true)
-public List<NotificationTargetResponse> getNotificationTargets() {
-    LocalDate today = LocalDate.now();
+    public List<NotificationTargetResponse> getNotificationTargets() {
+        LocalDate today = LocalDate.now();
 
-    List<InvoiceEntity> invoiceEntities = invoiceRepository.findAllByDeletedAtIsNull();
+        List<InvoiceEntity> invoiceEntities = invoiceRepository.findAllByDeletedAtIsNull();
 
-    return invoiceEntities.stream()
+        return invoiceEntities.stream()
             .filter(invoice -> {
                 Integer dueDay = invoice.getDueDay();
                 Integer notifyBefore = invoice.getNotifyBefore();
@@ -148,23 +148,27 @@ public List<NotificationTargetResponse> getNotificationTargets() {
                 int validDueDay = Math.min(dueDay, lastDayOfMonth);
 
                 LocalDate dueDate = today.withDayOfMonth(validDueDay);
-                LocalDate notifyDate = dueDate.minusDays(notifyBefore);
 
-                return today.equals(notifyDate);
+                long remainingDays = java.time.temporal.ChronoUnit.DAYS.between(today, dueDate);
+
+                return remainingDays >= 0 && remainingDays <= notifyBefore;
             })
             .map(invoice -> {
                 Integer dueDay = invoice.getDueDay();
+                Integer notifyBefore = invoice.getNotifyBefore();
 
                 int lastDayOfMonth = today.lengthOfMonth();
                 int validDueDay = Math.min(dueDay, lastDayOfMonth);
 
                 LocalDate dueDate = today.withDayOfMonth(validDueDay);
+                int remainingDays = (int) java.time.temporal.ChronoUnit.DAYS.between(today, dueDate);
 
                 return NotificationTargetResponse.builder()
                         .userId(invoice.getUserId())
                         .invoiceId(invoice.getId())
-                        .notifyBefore(invoice.getNotifyBefore())
+                        .notifyBefore(notifyBefore)
                         .dueDate(dueDate)
+                        .remainingDays(remainingDays)
                         .build();
             })
             .collect(Collectors.toList());
