@@ -132,33 +132,42 @@ public class InvoiceService {
 
     // 알림 대상자 리스트
     @Transactional(readOnly = true)
-    public List<NotificationTargetResponse> getNotificationTargets() {
-        LocalDate today = LocalDate.now();
-        int todayDay = today.getDayOfMonth();
+public List<NotificationTargetResponse> getNotificationTargets() {
+    LocalDate today = LocalDate.now();
 
-        List<InvoiceEntity> invoiceEntities = invoiceRepository.findAllByDeletedAtIsNull();
+    List<InvoiceEntity> invoiceEntities = invoiceRepository.findAllByDeletedAtIsNull();
 
-        return invoiceEntities.stream()
-                .filter(invoice -> {
-                    Integer dueDay = invoice.getDueDay();
-                    Integer notifyBefore = invoice.getNotifyBefore();
+    return invoiceEntities.stream()
+            .filter(invoice -> {
+                Integer dueDay = invoice.getDueDay();
+                Integer notifyBefore = invoice.getNotifyBefore();
 
-                    if (dueDay == null || notifyBefore == null) return false;
+                if (dueDay == null || notifyBefore == null) return false;
 
-                    return dueDay - notifyBefore == todayDay;
-                })
-                .map(invoice -> {
-                    Integer dueDay = invoice.getDueDay();
-                    LocalDate dueDate = LocalDate.now().withDayOfMonth(dueDay);
+                int lastDayOfMonth = today.lengthOfMonth();
+                int validDueDay = Math.min(dueDay, lastDayOfMonth);
 
-                    return NotificationTargetResponse.builder()
-                            .userId(invoice.getUserId())
-                            .invoiceId(invoice.getId())
-                            .notifyBefore(invoice.getNotifyBefore())
-                            .dueDate(dueDate)
-                            .build();
-                })
-                .collect(Collectors.toList());
+                LocalDate dueDate = today.withDayOfMonth(validDueDay);
+                LocalDate notifyDate = dueDate.minusDays(notifyBefore);
+
+                return today.equals(notifyDate);
+            })
+            .map(invoice -> {
+                Integer dueDay = invoice.getDueDay();
+
+                int lastDayOfMonth = today.lengthOfMonth();
+                int validDueDay = Math.min(dueDay, lastDayOfMonth);
+
+                LocalDate dueDate = today.withDayOfMonth(validDueDay);
+
+                return NotificationTargetResponse.builder()
+                        .userId(invoice.getUserId())
+                        .invoiceId(invoice.getId())
+                        .notifyBefore(invoice.getNotifyBefore())
+                        .dueDate(dueDate)
+                        .build();
+            })
+            .collect(Collectors.toList());
     }
 
     // 공통 검증  TODO: name, issueday 검증 추가
