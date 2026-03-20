@@ -1,10 +1,12 @@
 package com.example.notification_service.ctrl;
 
 import com.example.notification_service.domain.Notification;
+import com.example.notification_service.dto.request.CreateNotificationRequest;
 import com.example.notification_service.service.NotificationService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +30,7 @@ public class NotificationController {
     // 알림 생성 (POST)
     @Operation(summary = "알림 생성", description = "새로운 알림을 생성합니다.")
     @PostMapping
-    public void createNotification(@RequestBody NotificationRequest request) {
+    public void createNotification(@Valid @RequestBody CreateNotificationRequest request) {
         notificationService.createNotification(
             request.getUserId(), 
             request.getPaymentId(), 
@@ -56,15 +58,5 @@ public class NotificationController {
     @DeleteMapping("/{id}")
     public void deleteNotification(@PathVariable Long id) {
         notificationService.deleteNotification(id);
-    }
-
-    // 알림 생성을 위한 데이터 가방 (DTO)
-    @lombok.Getter
-    @lombok.NoArgsConstructor
-    public static class NotificationRequest {
-        private Long userId;
-        private Long paymentId;
-        private String type;
-        private String message;
     }
 }

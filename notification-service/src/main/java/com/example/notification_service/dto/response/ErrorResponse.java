@@ -1,4 +1,4 @@
-package com.example.notification_service.dto;
+package com.example.notification_service.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

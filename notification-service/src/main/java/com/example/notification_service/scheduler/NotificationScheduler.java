@@ -6,7 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.example.notification_service.client.BillServiceClient;
-import com.example.notification_service.dto.BillTargetResponse;
+import com.example.notification_service.dto.response.BillTargetResponse;
 import com.example.notification_service.service.NotificationService;
 
 import lombok.RequiredArgsConstructor;

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.example.notification_service.dto.BillTargetResponse;
+import com.example.notification_service.dto.response.BillTargetResponse;
 
 @FeignClient(name = "bill-service", url = "http://localhost:8083")
 public interface BillServiceClient {
