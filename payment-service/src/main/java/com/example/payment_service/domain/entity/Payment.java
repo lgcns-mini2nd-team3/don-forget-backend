@@ -21,7 +21,7 @@ public class Payment {
     // MSA: 다른 서비스(UserInvoice) 엔티티 참조 X
     // user_invoice_id는 외부 서비스의 식별자 값만 저장
     @Column(name = "user_invoice_id", nullable = false)
-    private Long userInvoiceId;
+    private Long invoiceId;
 
     @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
@@ -41,8 +41,8 @@ public class Payment {
 
     protected Payment() {}
 
-    public Payment(Long userInvoiceId, LocalDate dueDate, BigDecimal amount, PaymentStatus status) {
-        this.userInvoiceId = userInvoiceId;
+    public Payment(Long invoiceId, LocalDate dueDate, BigDecimal amount, PaymentStatus status) {
+        this.invoiceId = invoiceId;
         this.dueDate = dueDate;
         this.amount = amount;
         this.status = status;
