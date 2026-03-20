@@ -163,4 +163,19 @@ public class InvoiceService {
                         })
                         .collect(Collectors.toList());
     }
+
+    public List<InvoiceResponse> getInvoicesByIssueDay(int issueDay) {
+        List<InvoiceResponse> responses = invoiceRepository.findByIssueDay(issueDay).stream()
+                                            .map(InvoiceResponse::from)
+                                            .collect(Collectors.toList());
+                
+        return responses;
+    }
+
+    public List<Long> getInvoiceIdsByUserId(Long userId) {
+        List<Long> invoiceIds = invoiceRepository.findByUserId(userId).stream()
+                                        .map(invoice -> invoice.getId())
+                                        .collect(Collectors.toList());
+        return invoiceIds;
+    }
 }

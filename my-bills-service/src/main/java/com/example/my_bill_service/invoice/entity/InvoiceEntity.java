@@ -41,6 +41,9 @@ public class InvoiceEntity extends BaseEntity {
     @Column(name = "due_day", nullable = false)
     private Integer dueDay;
 
+    @Column(name = "issue_day", nullable = false)
+    private Integer issueDay;
+    
     @Column(name = "is_recurring", nullable = false)
     private Boolean isRecurring;
 

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.my_bill_service.invoice.dto.request.CreateInvoiceRequest;
 import com.example.my_bill_service.invoice.dto.request.UpdateInvoiceRequest;
+import com.example.my_bill_service.invoice.dto.response.InvoiceResponse;
 import com.example.my_bill_service.invoice.dto.response.NotificationTargetResponse;
 import com.example.my_bill_service.invoice.service.InvoiceService;
 
@@ -91,6 +92,19 @@ public class InvoiceController {
     @GetMapping("/internal/notifications/targets")
     public ResponseEntity<?> getNotificationTargets(){
         return ResponseEntity.ok(invoiceService.getNotificationTargets());
+    }
+
+    @GetMapping("/issue-targets")
+    ResponseEntity<List<InvoiceResponse>> getIssueTargets(@RequestParam("issueDay") int issueDay){
+        List<InvoiceResponse> result = invoiceService.getInvoicesByIssueDay(issueDay);
+        return ResponseEntity.ok(result);
+    }
+
+    // RequestParam부분은 나중에 X-USER-ID 헤더로 변경 예정
+    @GetMapping("/get-invoices")
+    ResponseEntity<List<Long>> getInvoicesByUserId(@RequestParam("userId") Long userId){
+        List<Long> result = invoiceService.getInvoiceIdsByUserId(userId);
+        return ResponseEntity.ok(result);
     }
     
 }

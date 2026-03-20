@@ -31,10 +31,7 @@ dependencies {
 	// Config Server 및 Spring Cloud Bus 의존성 추가
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
-<<<<<<< HEAD
-=======
-	
->>>>>>> c5d1bbee4dc481fc166e1232c3f8b4bf3f3c69d2
+
 	// swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 	// redis
@@ -51,6 +48,11 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+dependencyManagement{
+	imports{
+		mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2024.0.0'
+	}
+}
 dependencyManagement{
 	imports{
 		mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2024.0.0'
