@@ -78,26 +78,26 @@ public class InvoiceService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "청구서를 찾을 수 없습니다."));
 
         validateInvoiceRequest(
-                updateInvoiceRequest.getName(),
-                updateInvoiceRequest.getDueDay(),
-                updateInvoiceRequest.getNotifyBefore(),
-                updateInvoiceRequest.getIssueDay(),
-                updateInvoiceRequest.getIsRecurring(),
-                updateInvoiceRequest.getRecurCycle(),
-                updateInvoiceRequest.getRecurStart(),
-                updateInvoiceRequest.getRecurEnd()
+            updateInvoiceRequest.getName(),
+            updateInvoiceRequest.getDueDay(),
+            updateInvoiceRequest.getIssueDay(),
+            updateInvoiceRequest.getNotifyBefore(),
+            updateInvoiceRequest.getIsRecurring(),
+            updateInvoiceRequest.getRecurCycle(),
+            updateInvoiceRequest.getRecurStart(),
+            updateInvoiceRequest.getRecurEnd()
         );
 
         invoiceEntity.update(
-                updateInvoiceRequest.getName(),
-                updateInvoiceRequest.getAmount(),
-                updateInvoiceRequest.getDueDay(),
-                updateInvoiceRequest.getIssueDay(),
-                updateInvoiceRequest.getIsRecurring(),
-                updateInvoiceRequest.getRecurCycle(),
-                updateInvoiceRequest.getRecurStart(),
-                updateInvoiceRequest.getRecurEnd(),
-                updateInvoiceRequest.getNotifyBefore()
+            updateInvoiceRequest.getName() != null ? updateInvoiceRequest.getName() : invoiceEntity.getName(),
+            updateInvoiceRequest.getAmount() != null ? updateInvoiceRequest.getAmount() : invoiceEntity.getAmount(),
+            updateInvoiceRequest.getDueDay() != null ? updateInvoiceRequest.getDueDay() : invoiceEntity.getDueDay(),
+            updateInvoiceRequest.getIssueDay() != null ? updateInvoiceRequest.getIssueDay() : invoiceEntity.getIssueDay(),
+            updateInvoiceRequest.getIsRecurring() != null ? updateInvoiceRequest.getIsRecurring() : invoiceEntity.getIsRecurring(),
+            updateInvoiceRequest.getRecurCycle() != null ? updateInvoiceRequest.getRecurCycle() : invoiceEntity.getRecurCycle(),
+            updateInvoiceRequest.getRecurStart() != null ? updateInvoiceRequest.getRecurStart() : invoiceEntity.getRecurStart(),
+            updateInvoiceRequest.getRecurEnd() != null ? updateInvoiceRequest.getRecurEnd() : invoiceEntity.getRecurEnd(),
+            updateInvoiceRequest.getNotifyBefore() != null ? updateInvoiceRequest.getNotifyBefore() : invoiceEntity.getNotifyBefore()
         );
 
         invoiceRepository.save(invoiceEntity);
