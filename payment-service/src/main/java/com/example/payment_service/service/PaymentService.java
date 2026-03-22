@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.payment_service.common.utils.DueDateCalculator;
 import com.example.payment_service.dao.PaymentRepository;
+import com.example.payment_service.domain.dto.CreatePaymentResponse;
 import com.example.payment_service.domain.dto.InvoiceResponse;
 import com.example.payment_service.domain.dto.PayResponseDTO;
 import com.example.payment_service.domain.entity.Payment;
@@ -64,13 +65,12 @@ public class PaymentService {
     public void issuePaymentsForToday(LocalDate today) {
         int todayDay = today.getDayOfMonth();
         System.out.println("PaymentService: Running issuePaymentsForToday for date: " + today);
-        List<InvoiceResponse> targets = openFeignClient.getIssueTargets(todayDay);
+        List<CreatePaymentResponse> targets = openFeignClient.getIssueTargets(todayDay);
         System.out.println("PaymentService: Received " + targets.size() + " issue targets from my-bill-service");
         YearMonth ym = YearMonth.from(today);
 
-        for (InvoiceResponse  bill : targets) {
+        for (CreatePaymentResponse  bill : targets) {
             // 1) 기본 유효성/활성 필터 (my-bills에서 이미 걸러줬다면 최소화 가능)
-            if (bill.getDeletedAt() != null) continue;
             if (!Boolean.TRUE.equals(bill.getIsRecurring())) continue;
             System.out.println("PaymentService: Processing issue target: " + bill);
             // recurStart/recurEnd 범위 체크 (정책에 맞게 조절)
@@ -103,14 +103,21 @@ public class PaymentService {
             // 4) Payment 생성
             Payment payment = new Payment(
                     bill.getInvoiceId(),
+                    bill.getUserId(),
                     dueDate,
-                    bill.getAmount(),        // 변동금액이면 정책에 맞게 0 또는 null
-                    PaymentStatus.PENDING
+                    bill.getAmount()
             );
             System.out.println("PaymentService: Creating payment: " + payment);
             paymentRepository.save(payment);
 
             // (선택) Kafka Producer로 PaymentCreated 이벤트 발행 가능
         }
+    }
+
+    @Transactional
+    public void deleteById(Long paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new RuntimeException("Payment not found with id: " + paymentId));
+        paymentRepository.delete(payment);
     }
 }

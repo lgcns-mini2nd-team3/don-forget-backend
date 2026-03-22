@@ -165,7 +165,7 @@ public class InvoiceService {
     }
 
     public List<InvoiceResponse> getInvoicesByIssueDay(int issueDay) {
-        List<InvoiceResponse> responses = invoiceRepository.findByIssueDay(issueDay).stream()
+        List<InvoiceResponse> responses = invoiceRepository.findByIssueDayAndDeletedAtIsNull(issueDay).stream()
                                             .map(InvoiceResponse::from)
                                             .collect(Collectors.toList());
                 

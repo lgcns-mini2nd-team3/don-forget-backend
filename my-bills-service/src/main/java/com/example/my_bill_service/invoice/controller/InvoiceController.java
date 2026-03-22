@@ -102,8 +102,9 @@ public class InvoiceController {
 
     // RequestParam부분은 나중에 X-USER-ID 헤더로 변경 예정
     @GetMapping("/get-invoices")
-    ResponseEntity<List<Long>> getInvoicesByUserId(@RequestParam("userId") Long userId){
-        List<Long> result = invoiceService.getInvoiceIdsByUserId(userId);
+    ResponseEntity<List<Long>> getInvoicesByUserId(@RequestHeader("X-USER-ID") String userId){
+
+        List<Long> result = invoiceService.getInvoiceIdsByUserId(Long.valueOf(userId));
         return ResponseEntity.ok(result);
     }
     

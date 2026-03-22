@@ -1,10 +1,10 @@
 package com.example.payment_service.domain.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.example.payment_service.domain.entity.Payment;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +18,7 @@ public class PayResponseDTO {
     private Long invoiceId;
     private String status;
     private BigDecimal amount;
+    private LocalDate dueDate;
     private LocalDateTime paidAt;
     private LocalDateTime createdAt;
 
@@ -28,6 +29,7 @@ public class PayResponseDTO {
                 .invoiceId(payment.getInvoiceId())
                 .status(payment.getStatus().name())
                 .amount(payment.getAmount())
+                .dueDate(payment.getDueDate())
                 .paidAt(payment.getPaidAt())
                 .createdAt(payment.getCreatedAt())
                 .build();

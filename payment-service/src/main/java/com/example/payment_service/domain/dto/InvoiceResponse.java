@@ -3,8 +3,6 @@ package com.example.payment_service.domain.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import org.springframework.cglib.core.Local;
-
 import lombok.Getter;
 import lombok.ToString;
 
@@ -14,6 +12,8 @@ public class InvoiceResponse {
 
     private Long invoiceId;
     private Long templateId;
+    private Long userId;
+    // private String invoiceName;
     private BigDecimal amount;
     private Integer dueDay;
     private Integer issueDay;

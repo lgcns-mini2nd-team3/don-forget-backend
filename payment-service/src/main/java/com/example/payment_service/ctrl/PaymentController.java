@@ -39,9 +39,9 @@ public class PaymentController {
             )
         }
     )
-    @GetMapping("/{user_id}")
+    @GetMapping("/")
     public ResponseEntity<List<PayResponseDTO>> getPaymentsByUser(
-            @PathVariable("user_id") Long userId) {
+            @RequestHeader("X-USER-ID") Long userId) {
         List<PayResponseDTO> result = paymentService.findPaymentsByUser(userId);
         
         return ResponseEntity.ok(result);
@@ -125,5 +125,31 @@ public class PaymentController {
     public ResponseEntity<PayResponseDTO> markUnpaid(@PathVariable("payment_id") Long paymentId) {
         PayResponseDTO result = paymentService.markUnpaid(paymentId);
         return ResponseEntity.ok(result);
+    }
+
+    /**
+    * 체크리스트: 납부 건 삭제
+    * DELETE /api/v1/payments/{payment_id}/delete
+    */
+    @Operation(
+        summary = "납부 건 삭제",
+        description = "특정 납부 건을 삭제합니다.",
+        responses = {
+            @ApiResponse(
+                responseCode = "204",
+                description = "삭제 성공",
+                content = @Content
+            ),
+            @ApiResponse(
+                responseCode = "404",
+                description = "납부 건을 찾을 수 없음",
+                content = @Content
+            )
+        }
+    )
+    @DeleteMapping("/{payment_id}/delete")
+    public ResponseEntity<Void> deletePayment(@PathVariable("payment_id") Long paymentId) {
+        paymentService.deleteById(paymentId);
+        return ResponseEntity.noContent().build();
     }
 }

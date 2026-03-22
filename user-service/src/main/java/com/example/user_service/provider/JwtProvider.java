@@ -32,10 +32,11 @@ public class JwtProvider {
     }
 
     //access token
-    public String createAt(String email){
+    public String createAt(String email, Long userId){
         System.out.println(">>>> access token create : " + email);
         return Jwts.builder()
                     .setSubject(email)
+                    .claim("user_id", userId) 
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY))
                     .signWith(getStringKey())
@@ -43,10 +44,11 @@ public class JwtProvider {
     }
 
     //refresh token
-    public String createRt(String email){
+    public String createRt(String email, Long userId){
         System.out.println(">>>> refresh token create : " + email);
         return Jwts.builder()
                     .setSubject(email)
+                    .claim("user_id", userId)
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRY))
                     .signWith(getStringKey())
@@ -66,6 +68,20 @@ public class JwtProvider {
                             .getBody();
 
         return claims.getSubject();
+    }
+
+    public String getUserIdFromToken(String token) {
+        System.out.println(">>>> getUserIdFromToken token : " + token);
+        if(token.startsWith("Bearer ")){
+            token = token.substring(7);
+        }
+        Claims claims = Jwts.parserBuilder()
+                            .setSigningKey(getStringKey())
+                            .build()
+                            .parseClaimsJws(token)
+                            .getBody();
+
+        return claims.get("user_id", String.class);
     }
 
     public boolean validateToken(String token) {
