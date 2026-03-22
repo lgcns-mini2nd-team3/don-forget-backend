@@ -1,17 +1,20 @@
-server:
-  port: 8087
-
 spring:
   application:
     name: external-billing-service
-  
-  # DB 연결 설정
+  profiles:
+    active: local # 기본 실행 프로파일 설정
+
+---
+# 로컬 개발 환경 (MariaDB 3307 포트 사용)
+spring:
+  config:
+    activate:
+      on-profile: local
   datasource:
-    url: jdbc:mariadb://localhost:3306/user_bill
+    url: jdbc:mariadb://localhost:3307/user_bill # 타 도메인(Payment) DB 포트 규격 준수
     driver-class-name: org.mariadb.jdbc.Driver
     username: root
-    password:  # [주의] 로컬 테스트 시에만 비번 입력, 푸시 전엔 공백 유지!
-  
+    password: password # 로컬 테스트용 비밀번호 (푸시 전 확인 필요)
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,12 +22,29 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MariaDBDialect
-  
   cloud:
     config:
-      enabled: false
+      enabled: false # 로컬 단독 실행을 위한 설정 서버 비활성화
 
-# 설정 서버 예비 설정
-# config:
-#   import: "optional:configserver:http://localhost:8888"
-#   fail-fast: true
+server:
+  port: 8087 # 서비스 식별을 위한 고유 포트 유지
+
+---
+# AWS EKS 배포 환경 (Config Server 및 인프라 환경변수 활용)
+spring:
+  config:
+    activate:
+      on-profile: server
+    import: "optional:configserver:http://config-server:8080" # 수근님 Config Server 경로 준수
+  cloud:
+    config:
+      fail-fast: true # 설정 서버 연결 실패 시 구동 차단 (데이터 정합성 보장)
+      retry:
+        initial-interval: 3000
+  datasource:
+    url: jdbc:mariadb://${DB_HOST}:3306/user_bill # 배포 환경 환경변수 주입 규격 준수
+    username: ${DB_ADMIN}
+    password: ${DB_PASSWORD}
+
+server:
+  port: 8080 # 컨테이너 내부 표준 포트 준수

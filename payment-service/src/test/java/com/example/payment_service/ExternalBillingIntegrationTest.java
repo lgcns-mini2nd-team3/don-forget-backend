@@ -36,11 +36,11 @@ class ExternalBillingIntegrationTest {
         BigDecimal mockAmount = new BigDecimal("55000");
         LocalDate mockDueDate = LocalDate.now().plusDays(7);
 
-        System.out.println(">>> [MySQL] 연동 테스트 시작: InvoiceID=" + mockInvoiceId);
+        System.out.println(">>> 연동 테스트 시작: InvoiceID=" + mockInvoiceId);
 
         // 연동 로직 호출 
         paymentService.registerExternalBilling(mockInvoiceId, mockAmount, mockDueDate);
 
-        System.out.println(">>> [MySQL] 연동 테스트 완료! DB의 payments 테이블을 확인하세요.");
+        System.out.println(">>> 연동 테스트 완료! 테이블을 확인하세요.");
     }
 }
