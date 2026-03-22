@@ -2,6 +2,7 @@ package com.example.my_bill_service.invoice.service;
 
 import com.example.my_bill_service.invoice.dto.request.CreateInvoiceRequest;
 import com.example.my_bill_service.invoice.dto.request.UpdateInvoiceRequest;
+import com.example.my_bill_service.invoice.dto.response.CreatePaymentResponse;
 import com.example.my_bill_service.invoice.dto.response.InvoiceResponse;
 import com.example.my_bill_service.invoice.dto.response.NotificationTargetResponse;
 import com.example.my_bill_service.invoice.entity.InvoiceEntity;
@@ -164,9 +165,9 @@ public class InvoiceService {
                         .collect(Collectors.toList());
     }
 
-    public List<InvoiceResponse> getInvoicesByIssueDay(int issueDay) {
-        List<InvoiceResponse> responses = invoiceRepository.findByIssueDayAndDeletedAtIsNull(issueDay).stream()
-                                            .map(InvoiceResponse::from)
+    public List<CreatePaymentResponse> getInvoicesByIssueDay(int issueDay) {
+        List<CreatePaymentResponse> responses = invoiceRepository.findByIssueDayAndDeletedAtIsNull(issueDay).stream()
+                                            .map(CreatePaymentResponse::from)
                                             .collect(Collectors.toList());
                 
         return responses;

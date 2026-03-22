@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.payment_service.common.utils.DueDateCalculator;
 import com.example.payment_service.dao.PaymentRepository;
 import com.example.payment_service.domain.dto.CreatePaymentResponse;
-import com.example.payment_service.domain.dto.InvoiceResponse;
 import com.example.payment_service.domain.dto.PayResponseDTO;
 import com.example.payment_service.domain.entity.Payment;
 import com.example.payment_service.domain.entity.PaymentStatus;
@@ -80,9 +79,9 @@ public class PaymentService {
             // cycle 체크 (일단 MONTHLY만 처리, 필요하면 확장)
             if (bill.getRecurCycle() != null && !Objects.equals(bill.getRecurCycle(), "MONTHLY")) {
                 // TODO: BIMONTHLY/QUARTERLY/YEARLY 정책 확정 후 처리
+                System.out.println("PaymentService: Unsupported recurCycle, skipping: " + bill.getRecurCycle());
                 continue;
             }
-
             // 2) 이번 달 납부기한 계산
             int dueDay = bill.getDueDay() == null ? todayDay : bill.getDueDay();
             LocalDate dueDate = DueDateCalculator.calcDueDate(ym, dueDay);

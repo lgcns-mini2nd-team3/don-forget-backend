@@ -16,7 +16,7 @@ public class PaymentIssueScheduler {
     private final PaymentService paymentIssueService;
 
     // 매일 00:05에 실행 (서버 타임존 주의)
-    @Scheduled(cron = "0 27 18 * * *")
+    @Scheduled(cron = "0 20 20 * * *", zone = "Asia/Seoul")
     public void run() {
         paymentIssueService.issuePaymentsForToday(LocalDate.now());
     }
