@@ -1,8 +1,8 @@
-package com.example.my_bill_service.invoice.repository;
+package com.example.my_bill_service.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.my_bill_service.invoice.entity.InvoiceEntity;
+import com.example.my_bill_service.entity.InvoiceEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,5 +15,6 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long> {
 
     Optional<InvoiceEntity> findByIdAndUserIdAndDeletedAtIsNull(Long id, Long userId);
 
-    List<InvoiceEntity> findAllByDeletedAtIsNull();
+    List<InvoiceEntity> findByUserId(Long userId);
+    List<InvoiceEntity> findByIssueDay(int issueDay);
 }
