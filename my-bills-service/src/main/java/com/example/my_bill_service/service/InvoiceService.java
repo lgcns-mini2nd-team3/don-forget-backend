@@ -26,6 +26,7 @@ public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
 
     // 등록
+    @Transactional
     public void create(Long userId, CreateInvoiceRequest createInvoiceRequest) {
         validateInvoiceRequest(
                 createInvoiceRequest.getName(),
@@ -38,19 +39,7 @@ public class InvoiceService {
                 createInvoiceRequest.getRecurEnd()
         );
 
-        InvoiceEntity invoice = InvoiceEntity.builder()
-                .userId(userId)
-                .templateId(createInvoiceRequest.getTemplateId())
-                .name(createInvoiceRequest.getName())
-                .amount(createInvoiceRequest.getAmount())
-                .dueDay(createInvoiceRequest.getDueDay())
-                .issueDay(createInvoiceRequest.getIssueDay())
-                .isRecurring(createInvoiceRequest.getIsRecurring())
-                .recurCycle(createInvoiceRequest.getRecurCycle())
-                .recurStart(createInvoiceRequest.getRecurStart())
-                .recurEnd(createInvoiceRequest.getRecurEnd())
-                .notifyBefore(createInvoiceRequest.getNotifyBefore())
-                .build();
+        InvoiceEntity invoice = createInvoiceRequest.toEntity(userId);
 
         invoiceRepository.save(invoice);
     }
@@ -73,6 +62,7 @@ public class InvoiceService {
     }
 
     // 수정
+    @Transactional
     public void update(Long userId, Long invoiceId, UpdateInvoiceRequest updateInvoiceRequest) {
         InvoiceEntity invoiceEntity = invoiceRepository.findByIdAndUserIdAndDeletedAtIsNull(invoiceId, userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "청구서를 찾을 수 없습니다."));
@@ -88,19 +78,7 @@ public class InvoiceService {
             updateInvoiceRequest.getRecurEnd()
         );
 
-        invoiceEntity.update(
-            updateInvoiceRequest.getName() != null ? updateInvoiceRequest.getName() : invoiceEntity.getName(),
-            updateInvoiceRequest.getAmount() != null ? updateInvoiceRequest.getAmount() : invoiceEntity.getAmount(),
-            updateInvoiceRequest.getDueDay() != null ? updateInvoiceRequest.getDueDay() : invoiceEntity.getDueDay(),
-            updateInvoiceRequest.getIssueDay() != null ? updateInvoiceRequest.getIssueDay() : invoiceEntity.getIssueDay(),
-            updateInvoiceRequest.getIsRecurring() != null ? updateInvoiceRequest.getIsRecurring() : invoiceEntity.getIsRecurring(),
-            updateInvoiceRequest.getRecurCycle() != null ? updateInvoiceRequest.getRecurCycle() : invoiceEntity.getRecurCycle(),
-            updateInvoiceRequest.getRecurStart() != null ? updateInvoiceRequest.getRecurStart() : invoiceEntity.getRecurStart(),
-            updateInvoiceRequest.getRecurEnd() != null ? updateInvoiceRequest.getRecurEnd() : invoiceEntity.getRecurEnd(),
-            updateInvoiceRequest.getNotifyBefore() != null ? updateInvoiceRequest.getNotifyBefore() : invoiceEntity.getNotifyBefore()
-        );
-
-        invoiceRepository.save(invoiceEntity);
+        invoiceEntity.update(updateInvoiceRequest);
     }
 
     // 삭제 (soft delete)

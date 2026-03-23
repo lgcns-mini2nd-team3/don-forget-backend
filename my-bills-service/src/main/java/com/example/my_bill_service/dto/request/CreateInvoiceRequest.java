@@ -2,6 +2,7 @@ package com.example.my_bill_service.dto.request;
 
 import java.time.LocalDate;
 
+import com.example.my_bill_service.entity.InvoiceEntity;
 import com.example.my_bill_service.enumtype.RecurrenceCycle;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,4 +41,20 @@ public class CreateInvoiceRequest {
 
     @Schema(description = "알림 기준일(D-n)", example = "3")
     private Integer notifyBefore;
+
+    public InvoiceEntity toEntity(Long userId) {
+        return InvoiceEntity.builder()
+                .userId(userId)
+                .templateId(templateId)
+                .name(name)
+                .amount(amount)
+                .dueDay(dueDay)
+                .issueDay(issueDay)
+                .isRecurring(isRecurring)
+                .recurCycle(recurCycle)
+                .recurStart(recurStart)
+                .recurEnd(recurEnd)
+                .notifyBefore(notifyBefore)
+                .build();
+    }
 }
