@@ -1,3 +1,39 @@
+server:
+    port: 8888
 spring:
-  profiles:
-    active: local
+  application:
+    name: configserver
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  
+  # config server 설정
+  cloud:
+    config:
+      server:
+        # git 저장소에서 설정 파일을 가져옴
+        git:
+          # git 저장소
+          uri: https://github.com/lgcns-mini2nd-team3/don-forget-config.git
+          # config server 기동시 git repo를 미리 clone  
+          clone-on-start: true
+
+          # branch 지정
+          # repo -> private 일 경우 
+          # username: github 계정
+          # password: token(git account -> settings -> developer settings -> personal access tokens -> generate new token) 
+          default-label: feature/payment-service
+    
+    # msa 전체에 이벤트를 전파하는 메시지 버스 
+    # /busrefresh 호출시: RabbitMQ이벤트 발생이되고, 모든 서비스가 동시에 설정을 갱신
+    bus:
+      enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: busrefresh, health
