@@ -1,18 +1,28 @@
 server:
-  port: 8888
-
+    port: 8888
 spring:
   application:
-    name: config-server
+    name: configserver
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  
 
   cloud:
     config:
       server:
+
         git:
-          uri: ${CONFIG_GIT_URI}
-          default-label: ${CONFIG_GIT_BRANCH:main}
+
+          uri: https://github.com/lgcns-mini2nd-team3/don-forget-config.git
+
           clone-on-start: true
 
+          default-label: feature/payment-service
+    
 
     bus:
       enabled: true
