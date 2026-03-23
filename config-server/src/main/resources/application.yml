@@ -25,7 +25,7 @@ spring:
           # repo -> private 일 경우 
           # username: github 계정
           # password: token(git account -> settings -> developer settings -> personal access tokens -> generate new token) 
-          default-label: feature/payment-service
+          default-label: feature/user-service
     
     # msa 전체에 이벤트를 전파하는 메시지 버스 
     # /busrefresh 호출시: RabbitMQ이벤트 발생이되고, 모든 서비스가 동시에 설정을 갱신
