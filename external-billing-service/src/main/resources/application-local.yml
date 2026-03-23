@@ -1,31 +1,6 @@
-server:
-  port: 8087 
-
 spring:
   application:
     name: external-billing-service
-  
   config:
-    import: "optional:configserver:http://localhost:8888" 
-  cloud:
-    config:
-      enabled: true
-
-  datasource:
-    url: jdbc:mariadb://localhost:3307/user_bill?useSSL=false&auth_mechanisms=default
-    username: root
-    password: 1234
-    driver-class-name: org.mariadb.jdbc.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: update 
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MariaDBDialect
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
+    import: "optional:configserver:http://localhost:8888"
+    fail-fast: true
