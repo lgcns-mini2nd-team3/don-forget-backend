@@ -11,11 +11,11 @@ import lombok.Getter;
 @Schema(description = "알림 발송 대상 응답 DTO")
 public class NotificationTargetResponse {
 
-    @Schema(description = "사용자 ID", example = "1")
-    private Long userId;
-
     @Schema(description = "청구서 ID", example = "10")
     private Long invoiceId;
+
+    @Schema(description = "사용자 ID", example = "1")
+    private Long userId;
 
     @Schema(description = "이름", example = "청구서명")
     private String name;

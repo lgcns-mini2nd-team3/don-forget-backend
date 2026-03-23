@@ -17,6 +17,9 @@ public class InvoiceResponse {
     @Schema(description = "청구서 ID", example = "1")
     private Long invoiceId;
 
+    @Schema(description = "사용자 ID", example = "1")
+    private Long userId;
+
     @Schema(description = "템플릿 ID", example = "1")
     private Long templateId;
 
