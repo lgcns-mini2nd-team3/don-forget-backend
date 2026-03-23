@@ -1,3 +1,5 @@
+server:
+  port: 8080
 spring:
   application:
     # git repo의 yaml 파일의 이름과 일치해야 합니다.
@@ -8,6 +10,3 @@ spring:
     import: "optional:configserver:http://localhost:8888"
     # 이건 config server가 없을 때 애플리케이션이 시작되지 않도록 하는 설정입니다.
     fail-fast: true
-
-jwt:
-  secret: ogolgye-super-secret-key-for-jwt-forwebstudy

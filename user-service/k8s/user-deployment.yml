@@ -1,0 +1,75 @@
+# 각각의 pod가 있고 이를 관리하는 서비스가 있고 이 서비스를 관리하는 replicaset이 있고, 이 replicaset으로 pod의 개수가 조절된다.
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: user-deployment    # 클러스터 내에서 유일한 Pod 이름
+  namespace: lgcns          # Pod가 속할 네임스페이스
+
+spec:  
+  # 자원공간에 대한 낭비를 방지하고 관리의 편의성을 제공해주는 옵션(없어도 된다.)
+  revisionHistoryLimit: 2   # revisionHistoryLimit은 replicaset이 관리하는 pod의 개수를 조절하는 것과는 별개로, replicaset이 관리하는 pod의 변경 이력을 몇 개까지 보관할 것인지를 설정하는 것이다. 예를 들어, revisionHistoryLimit이 3으로 설정되어 있다면, replicaset이 관리하는 pod의 변경 이력이 3개까지만 보관되고, 그 이상이 되면 가장 오래된 변경 이력이 삭제된다. 따라서, revisionHistoryLimit은 replicaset이 관리하는 pod의 개수를 조절하는 것과는 별개로, replicaset이 관리하는 pod의 변경 이력을 몇 개까지 보관할 것인지를 설정하는 것이다.                      
+  replicas: 1               # 몇개의 Pod를 유지할 것인가 
+  selector:
+    matchLabels:            # replicaset은 직접 pod로 찾아갈 수 없으므로 matchLabels라고 주는 것
+      app: user             # service가 찾는 pod의 이름
+
+  template:                 # pod의 템플릿을 정의하는 부분
+    metadata:
+      labels:
+        app: user           # pod의 이름을 app: user로 설정 -> service가 이 이름을 보고 pod를 찾아갈 수 있게 해줌
+
+    spec:
+      containers:               
+        - name: user-container
+
+          # ecr의 이미지를 가져와서 컨테이너를 만들겠다.
+          image: 313984758699.dkr.ecr.ap-northeast-2.amazonaws.com/user-service:latest
+          ports:
+           - containerPort: 8080 # 컨테이너가 노출할 포트
+          resources:
+            # 컨테이너가 사용할 수 있는 최대 리소스
+            limits:
+              cpu: "1" # Pod가 사용할 수 있는 최대 CPU 양을 1로 제한 
+              memory: "500Mi" # Pod가 사용할 수 있는 최대 메모리 양을 500Mi로 제한 << 이를 넘어가면 auto-scaling이 작동해서 pod의 개수를 늘려줌
+            # 컨테이너가 사용할 수 있는 최소 리소스
+            requests:
+              cpu: "0.5" # Pod가 사용할 수 있는 최소 CPU 양을 0.5로 설정
+              memory: "250Mi" # Pod가 사용할 수 있는 최소 메모리 양을 250Mi로 설정 << 이를 충족하지 못하면 pod가 스케줄링되지 않음
+      # secret 작성 후 그 설정을 컨테이너에 적용하기 위한 설정
+          env:
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: lgcns-app-secrets
+                  key: DB_HOST # lgcns-app-secrets라는 secret에서 DB_HOST라는 key의 value를 가져와서 DB_HOST라는 환경변수로 만들어준다.
+            - name: DB_ADMIN
+              valueFrom:
+                secretKeyRef:
+                  name: lgcns-app-secrets
+                  key: DB_ADMIN
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: lgcns-app-secrets
+                  key: DB_PASSWORD
+
+
+--- # 이거 위랑 아래를 나눠(구분해)주는 것
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: user-service       # 클러스터 내에서 유일한 Pod 이름
+  namespace: lgcns          # Pod가 속할 네임스페이스
+
+spec:        
+  type: ClusterIP           # service에서 selector를 쓰기 위해서는 type을 써줘야 함(쓰지 않으면 ClusterIP가 default)
+  selector:
+      app: user         # 외부에서 user라고 labes 이름이 붙은 놈에게 서비스를 통해 접근할 수 있게 해줌                          
+  ports:
+  # service port
+  - port: 80             
+    # Pod inner port(cluster 내부 환경에서는 port 번호가 다 동일해도 상관없음, service가 알아서 포트 번호를 매핑해주기 때문)
+    targetPort: 8080       
