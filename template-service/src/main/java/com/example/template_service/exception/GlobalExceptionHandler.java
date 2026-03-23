@@ -5,17 +5,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Map;
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(TemplateNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleTemplateNotFoundException(TemplateNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of(
-                        "message", e.getMessage(),
-                        "status", 404
-                ));
+    public ResponseEntity<String> handleTemplateNotFoundException(TemplateNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidCategoryException.class)
+    public ResponseEntity<String> handleInvalidCategoryException(InvalidCategoryException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 }

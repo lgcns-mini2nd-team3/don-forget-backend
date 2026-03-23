@@ -7,6 +7,7 @@ import com.example.template_service.dto.request.TemplateUpdateRequest;
 import com.example.template_service.exception.TemplateNotFoundException;
 import com.example.template_service.repository.BillTemplateRepository;
 import org.springframework.stereotype.Service;
+import com.example.template_service.exception.InvalidCategoryException;
 
 import java.util.List;
 
@@ -19,14 +20,18 @@ public class TemplateService {
         this.billTemplateRepository = billTemplateRepository;
     }
 
-    public List<BillTemplate> getTemplates(String category) {
-        if (category == null || category.isBlank()) {
-            return billTemplateRepository.findAll();
-        }
+public List<BillTemplate> getTemplates(String category) {
+    if (category == null || category.isBlank()) {
+        return billTemplateRepository.findAll();
+    }
 
+    try {
         TemplateCategory templateCategory = TemplateCategory.valueOf(category.toUpperCase());
         return billTemplateRepository.findByCategory(templateCategory);
+    } catch (IllegalArgumentException e) {
+        throw new InvalidCategoryException(category);
     }
+}
 
     public BillTemplate getTemplate(Long templateId) {
         return findById(templateId);
