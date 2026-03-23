@@ -2,6 +2,8 @@ package com.example.my_bill_service.dto.response;
 
 import java.time.LocalDate;
 
+import org.springframework.cglib.core.Local;
+
 import com.example.my_bill_service.entity.InvoiceEntity;
 import com.example.my_bill_service.enumtype.RecurrenceCycle;
 
@@ -31,7 +33,7 @@ public class InvoiceResponse {
     
     @Schema(description = "납부일", example = "25")
     private Integer dueDay;
-
+    
     @Schema(description = "발행일", example = "20")
     private Integer issueDay;
     
@@ -46,9 +48,12 @@ public class InvoiceResponse {
 
     @Schema(description = "반복 종료일", example = "2026-12-31", nullable = true)
     private LocalDate recurEnd;
-
+    
     @Schema(description = "알림 기준일(D-n)", example = "3")
     private Integer notifyBefore;
+    
+    @Schema(description = "청구 상태", example = "연체: OVERDUE, UNPAID: 미납, PAID: 납부완료")
+    private String status;
 
     public static InvoiceResponse from(InvoiceEntity entity) {
         return InvoiceResponse.builder()
@@ -63,6 +68,20 @@ public class InvoiceResponse {
                 .recurStart(entity.getRecurStart())
                 .recurEnd(entity.getRecurEnd())
                 .notifyBefore(entity.getNotifyBefore())
+                .status(calculateStatus(entity))
                 .build();
+    }
+
+    private static String calculateStatus(InvoiceEntity entity){
+        LocalDate today = LocalDate.now();
+        int dueDay = entity.getDueDay();
+
+        LocalDate dueDate = LocalDate.of(today.getYear(), today.getMonth(), dueDay);
+
+        if(today.isAfter(dueDate)){
+            return "OVERDUE";
+        }
+        return "UNPAID";
+        
     }
 }

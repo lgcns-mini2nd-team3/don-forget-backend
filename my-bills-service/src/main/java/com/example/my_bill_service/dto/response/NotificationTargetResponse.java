@@ -25,4 +25,7 @@ public class NotificationTargetResponse {
 
     @Schema(description = "알림 기준일(D-n)", example = "3")
     private Integer notifyBefore;
+
+    @Schema(description = "납부일까지 남은 일수(D-day 기준, 0이면 당일, 음수면 지난 상태)", example = "3")
+    private Integer remainingDays;
 }

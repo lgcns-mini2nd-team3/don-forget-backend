@@ -78,26 +78,26 @@ public class InvoiceService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "청구서를 찾을 수 없습니다."));
 
         validateInvoiceRequest(
-                updateInvoiceRequest.getName(),
-                updateInvoiceRequest.getDueDay(),
-                updateInvoiceRequest.getNotifyBefore(),
-                updateInvoiceRequest.getIssueDay(),
-                updateInvoiceRequest.getIsRecurring(),
-                updateInvoiceRequest.getRecurCycle(),
-                updateInvoiceRequest.getRecurStart(),
-                updateInvoiceRequest.getRecurEnd()
+            updateInvoiceRequest.getName(),
+            updateInvoiceRequest.getDueDay(),
+            updateInvoiceRequest.getIssueDay(),
+            updateInvoiceRequest.getNotifyBefore(),
+            updateInvoiceRequest.getIsRecurring(),
+            updateInvoiceRequest.getRecurCycle(),
+            updateInvoiceRequest.getRecurStart(),
+            updateInvoiceRequest.getRecurEnd()
         );
 
         invoiceEntity.update(
-                updateInvoiceRequest.getName(),
-                updateInvoiceRequest.getAmount(),
-                updateInvoiceRequest.getDueDay(),
-                updateInvoiceRequest.getIssueDay(),
-                updateInvoiceRequest.getIsRecurring(),
-                updateInvoiceRequest.getRecurCycle(),
-                updateInvoiceRequest.getRecurStart(),
-                updateInvoiceRequest.getRecurEnd(),
-                updateInvoiceRequest.getNotifyBefore()
+            updateInvoiceRequest.getName() != null ? updateInvoiceRequest.getName() : invoiceEntity.getName(),
+            updateInvoiceRequest.getAmount() != null ? updateInvoiceRequest.getAmount() : invoiceEntity.getAmount(),
+            updateInvoiceRequest.getDueDay() != null ? updateInvoiceRequest.getDueDay() : invoiceEntity.getDueDay(),
+            updateInvoiceRequest.getIssueDay() != null ? updateInvoiceRequest.getIssueDay() : invoiceEntity.getIssueDay(),
+            updateInvoiceRequest.getIsRecurring() != null ? updateInvoiceRequest.getIsRecurring() : invoiceEntity.getIsRecurring(),
+            updateInvoiceRequest.getRecurCycle() != null ? updateInvoiceRequest.getRecurCycle() : invoiceEntity.getRecurCycle(),
+            updateInvoiceRequest.getRecurStart() != null ? updateInvoiceRequest.getRecurStart() : invoiceEntity.getRecurStart(),
+            updateInvoiceRequest.getRecurEnd() != null ? updateInvoiceRequest.getRecurEnd() : invoiceEntity.getRecurEnd(),
+            updateInvoiceRequest.getNotifyBefore() != null ? updateInvoiceRequest.getNotifyBefore() : invoiceEntity.getNotifyBefore()
         );
 
         invoiceRepository.save(invoiceEntity);
@@ -134,31 +134,44 @@ public class InvoiceService {
     @Transactional(readOnly = true)
     public List<NotificationTargetResponse> getNotificationTargets() {
         LocalDate today = LocalDate.now();
-        int todayDay = today.getDayOfMonth();
 
         List<InvoiceEntity> invoiceEntities = invoiceRepository.findAllByDeletedAtIsNull();
 
         return invoiceEntities.stream()
-                .filter(invoice -> {
-                    Integer dueDay = invoice.getDueDay();
-                    Integer notifyBefore = invoice.getNotifyBefore();
+            .filter(invoice -> {
+                Integer dueDay = invoice.getDueDay();
+                Integer notifyBefore = invoice.getNotifyBefore();
 
-                    if (dueDay == null || notifyBefore == null) return false;
+                if (dueDay == null || notifyBefore == null) return false;
 
-                    return dueDay - notifyBefore == todayDay;
-                })
-                .map(invoice -> {
-                    Integer dueDay = invoice.getDueDay();
-                    LocalDate dueDate = LocalDate.now().withDayOfMonth(dueDay);
+                int lastDayOfMonth = today.lengthOfMonth();
+                int validDueDay = Math.min(dueDay, lastDayOfMonth);
 
-                    return NotificationTargetResponse.builder()
-                            .userId(invoice.getUserId())
-                            .invoiceId(invoice.getId())
-                            .notifyBefore(invoice.getNotifyBefore())
-                            .dueDate(dueDate)
-                            .build();
-                })
-                .collect(Collectors.toList());
+                LocalDate dueDate = today.withDayOfMonth(validDueDay);
+
+                long remainingDays = java.time.temporal.ChronoUnit.DAYS.between(today, dueDate);
+
+                return remainingDays >= 0 && remainingDays <= notifyBefore;
+            })
+            .map(invoice -> {
+                Integer dueDay = invoice.getDueDay();
+                Integer notifyBefore = invoice.getNotifyBefore();
+
+                int lastDayOfMonth = today.lengthOfMonth();
+                int validDueDay = Math.min(dueDay, lastDayOfMonth);
+
+                LocalDate dueDate = today.withDayOfMonth(validDueDay);
+                int remainingDays = (int) java.time.temporal.ChronoUnit.DAYS.between(today, dueDate);
+
+                return NotificationTargetResponse.builder()
+                        .userId(invoice.getUserId())
+                        .invoiceId(invoice.getId())
+                        .notifyBefore(notifyBefore)
+                        .dueDate(dueDate)
+                        .remainingDays(remainingDays)
+                        .build();
+            })
+            .collect(Collectors.toList());
     }
 
     // 공통 검증  TODO: name, issueday 검증 추가
