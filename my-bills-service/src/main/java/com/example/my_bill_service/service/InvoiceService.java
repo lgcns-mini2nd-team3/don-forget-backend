@@ -169,6 +169,7 @@ public class InvoiceService {
                         .notifyBefore(notifyBefore)
                         .dueDate(dueDate)
                         .remainingDays(remainingDays)
+                        .name(invoice.getName())
                         .build();
             })
             .collect(Collectors.toList());
