@@ -1,9 +1,9 @@
 spring:
   application:
     name: user-service
+
+  profiles:
+    active: local
+
   config:
-    import: "optional:configserver:http://localhost:8080"
-  
-  cloud:
-    config:
-      fail-fast: true
+    import: optional:configserver:http://localhost:8888

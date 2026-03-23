@@ -1,7 +1,7 @@
 application: app/v1
 kind: Deployment
 metedata:
-  name: user-deplyment
+  name: user-deployment
   namespace: 
 
 spec:
@@ -30,13 +30,13 @@ spec:
               name:
               key:
           
-        - name:
+        - name: DB_ADMIN
           valueForm:
             secretRefKey:
               name:
               key:
 
-        - name:
+        - name: DB_PASSWORD
           valueForm:
             secretRefKey:
               name:
