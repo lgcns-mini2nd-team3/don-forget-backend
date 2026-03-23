@@ -1,5 +1,5 @@
 /**
- * 외부 고지서 수집 데이터 연동 테스트
+ * 외부 고지서 수집 데이터 연동 테스트 파일
  */
 package com.example.payment_service;
 

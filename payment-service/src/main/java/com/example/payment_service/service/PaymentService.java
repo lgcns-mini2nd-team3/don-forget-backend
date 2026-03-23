@@ -73,6 +73,7 @@ public class PaymentService {
 
         Payment payment = new Payment(
                 invoiceId,
+            //  name,
                 dueDate,
                 amount,
                 PaymentStatus.PENDING

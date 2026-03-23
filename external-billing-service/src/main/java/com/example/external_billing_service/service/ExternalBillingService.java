@@ -48,7 +48,7 @@ public class ExternalBillingService {
             updateHistoryStatus(history, "FAILED");
             log.error("결제 서비스 호출 실패: 상태 업데이트 수행 (FAILED)");
             
-            throw new ExternalBillingException("결제 서비스 연동 오류: " + e.getMessage());
+           throw new ExternalBillingException("결제 서비스 연동 오류: " + e.getMessage());
         }
     }
 
@@ -60,6 +60,7 @@ public class ExternalBillingService {
     public BillingHistory saveInitialHistory(ExternalBillDto dto) {
         return historyRepository.save(BillingHistory.builder()
                 .invoiceId(dto.getInvoiceId())
+                .name(dto.getName())
                 .amount(dto.getAmount())
                 .dueDay(dto.getDueDay())
                 .billType(dto.getBillType())

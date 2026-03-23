@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 @Data
 public class ExternalBillDto {
     private Long invoiceId;
+    private String name;
     private BigDecimal amount;
     private Integer dueDay;
     private String billType;

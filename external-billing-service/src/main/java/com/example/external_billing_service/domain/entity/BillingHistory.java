@@ -22,6 +22,9 @@ public class BillingHistory {
     @Column(name = "invoice_id", nullable = false)
     private Long invoiceId;
 
+    @Column(name = "name", length = 100)
+    private String name;
+
     @Column(name = "amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 
@@ -46,8 +49,9 @@ public class BillingHistory {
     }
 
     @Builder
-    public BillingHistory(Long invoiceId, BigDecimal amount, Integer dueDay, String billType, String status, Integer notifyBefore) {
+    public BillingHistory(Long invoiceId, String name, BigDecimal amount, Integer dueDay, String billType, String status, Integer notifyBefore) {
         this.invoiceId = invoiceId;
+        this.name = name;
         this.amount = amount;
         this.dueDay = dueDay;
         this.billType = billType;
