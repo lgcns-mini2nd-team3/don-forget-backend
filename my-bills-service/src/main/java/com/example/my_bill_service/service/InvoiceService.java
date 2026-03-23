@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.my_bill_service.dto.request.CreateInvoiceRequest;
 import com.example.my_bill_service.dto.request.UpdateInvoiceRequest;
+import com.example.my_bill_service.dto.response.CreatePaymentResponse;
 import com.example.my_bill_service.dto.response.InvoiceResponse;
 import com.example.my_bill_service.dto.response.NotificationTargetResponse;
 import com.example.my_bill_service.entity.InvoiceEntity;
@@ -84,23 +85,6 @@ public class InvoiceService {
         invoiceRepository.save(invoiceEntity);
     }
 
-    // 발행 대상 조회
-    @Transactional(readOnly = true)
-    public List<InvoiceResponse> getInvoicesByIssueDay(int issueDay) {
-        return invoiceRepository.findByIssueDay(issueDay)
-                .stream()
-                .map(InvoiceResponse::from)
-                .collect(Collectors.toList());
-    }
-
-    // 사용자별 invoice id 조회
-    @Transactional(readOnly = true)
-    public List<Long> getInvoiceIdsByUserId(Long userId) {
-        return invoiceRepository.findByUserId(userId)
-                .stream()
-                .map(InvoiceEntity::getId)
-                .collect(Collectors.toList());
-    }
 
     // 알림 대상자 리스트
     @Transactional(readOnly = true)
@@ -176,5 +160,24 @@ public class InvoiceService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "반복 시작일은 필수입니다.");
             }
         }
+    }
+
+    public List<CreatePaymentResponse> getInvoicesByIssueDay(LocalDate today) {
+    int todayDay = today.getDayOfMonth();
+    int lastDay = today.lengthOfMonth();
+
+    List<InvoiceEntity> invoices;
+    if (todayDay == lastDay) {
+        // 말일: issue_day가 오늘보다 크면(=존재하지 않는 날짜면) 말일에 처리
+        invoices = invoiceRepository
+            .findByIssueDayGreaterThanEqualAndDeletedAtIsNull(todayDay);
+    } else {
+        invoices = invoiceRepository
+            .findByIssueDayAndDeletedAtIsNull(todayDay);
+    }
+
+    return invoices.stream()
+        .map(CreatePaymentResponse::from)
+        .toList();
     }
 }
