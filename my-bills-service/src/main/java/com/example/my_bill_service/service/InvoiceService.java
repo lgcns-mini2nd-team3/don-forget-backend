@@ -29,14 +29,11 @@ public class InvoiceService {
     @Transactional
     public void create(Long userId, CreateInvoiceRequest createInvoiceRequest) {
         validateInvoiceRequest(
-                createInvoiceRequest.getName(),
                 createInvoiceRequest.getDueDay(),
-                createInvoiceRequest.getIssueDay(),
                 createInvoiceRequest.getNotifyBefore(),
                 createInvoiceRequest.getIsRecurring(),
                 createInvoiceRequest.getRecurCycle(),
-                createInvoiceRequest.getRecurStart(),
-                createInvoiceRequest.getRecurEnd()
+                createInvoiceRequest.getRecurStart()
         );
 
         InvoiceEntity invoice = createInvoiceRequest.toEntity(userId);
@@ -68,14 +65,11 @@ public class InvoiceService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "청구서를 찾을 수 없습니다."));
 
         validateInvoiceRequest(
-            updateInvoiceRequest.getName(),
             updateInvoiceRequest.getDueDay(),
-            updateInvoiceRequest.getIssueDay(),
             updateInvoiceRequest.getNotifyBefore(),
             updateInvoiceRequest.getIsRecurring(),
             updateInvoiceRequest.getRecurCycle(),
-            updateInvoiceRequest.getRecurStart(),
-            updateInvoiceRequest.getRecurEnd()
+            updateInvoiceRequest.getRecurStart()
         );
 
         invoiceEntity.update(updateInvoiceRequest);
@@ -153,16 +147,13 @@ public class InvoiceService {
             .collect(Collectors.toList());
     }
 
-    // 공통 검증  TODO: name, issueday 검증 추가
+    // 공통 검증
     private void validateInvoiceRequest(
-            String name,
             Integer dueDay,
-            Integer issueDay,
             Integer notifyBefore,
             Boolean isRecurring,
             Object recurCycle,
-            Object recurStart,
-            Object recurEnd
+            Object recurStart
     ) {
         if (dueDay == null || dueDay < 1 || dueDay > 31) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "납부일은 1~31 사이여야 합니다.");
