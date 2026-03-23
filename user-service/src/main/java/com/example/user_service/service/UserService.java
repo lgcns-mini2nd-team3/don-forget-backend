@@ -79,8 +79,8 @@ public class UserService {
             throw new RuntimeException("비밀번호 일치하지 않음");
         }
         System.out.println(">>>> 2. 토큰 생성");
-        String at = jwtProvider.createAt(entity.getEmail());
-        String rt = jwtProvider.createRt(entity.getEmail());
+        String at = jwtProvider.createAt(entity.getEmail(), entity.getUserId());
+        String rt = jwtProvider.createRt(entity.getEmail(), entity.getUserId());
 
 
         System.out.println(">>>> 3. redis 저장");
@@ -120,13 +120,14 @@ public class UserService {
         }
 
         String email = jwtProvider.getUserEmailFromToken(refreshToken);
+        Long userId = Long.parseLong(jwtProvider.getUserIdFromToken(refreshToken));
         String storedRt = getRefreshToken(email);
 
         if (!storedRt.equals(refreshToken)) {
             throw new RuntimeException("유효하지 않은 refresh token");
         }
 
-        String newAt = jwtProvider.createAt(email);
+        String newAt = jwtProvider.createAt(email, userId);
 
         Map<String, Object> map = new HashMap<>();
         map.put("access", newAt);

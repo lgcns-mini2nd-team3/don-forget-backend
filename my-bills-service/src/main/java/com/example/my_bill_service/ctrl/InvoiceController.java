@@ -1,14 +1,17 @@
 package com.example.my_bill_service.ctrl;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.my_bill_service.dto.response.InvoiceResponse;
+
 import com.example.my_bill_service.dto.request.CreateInvoiceRequest;
 import com.example.my_bill_service.dto.request.UpdateInvoiceRequest;
+import com.example.my_bill_service.dto.response.CreatePaymentResponse;
 import com.example.my_bill_service.dto.response.NotificationTargetResponse;
 import com.example.my_bill_service.service.InvoiceService;
 
@@ -42,6 +45,7 @@ public class InvoiceController {
             @RequestHeader("X-USER-ID") Long userId
     ) {
         return ResponseEntity.ok(invoiceService.getList(userId));
+
     }
 
     // 단건 조회
@@ -87,18 +91,8 @@ public class InvoiceController {
     // 특정 발행일 기준 청구서 조회
     @Operation(summary = "청구서 발행 대상 조회", description = "특정 issueDay 기준 발행 대상 청구서 조회")
     @GetMapping("/issue-targets")
-    public ResponseEntity<List<InvoiceResponse>> getIssueTargets(
-            @RequestParam("issueDay") int issueDay
-    ) {
-        return ResponseEntity.ok(invoiceService.getInvoicesByIssueDay(issueDay));
-    }
-
-    // 사용자별 invoice id 조회
-    @Operation(summary = "사용자별 청구서 ID 조회", description = "사용자별 청구서 ID 목록 조회")
-    @GetMapping("/get-invoices")
-    public ResponseEntity<List<Long>> getInvoicesByUserId(
-            @RequestParam("userId") Long userId
-    ) {
-        return ResponseEntity.ok(invoiceService.getInvoiceIdsByUserId(userId));
+    ResponseEntity<List<CreatePaymentResponse>> getIssueTargets(@RequestParam("today") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate today) {
+        List<CreatePaymentResponse> result = invoiceService.getInvoicesByIssueDay(today);
+        return ResponseEntity.ok(result);
     }
 }

@@ -29,7 +29,8 @@ public class JwtAuthentication implements GlobalFilter {
     private Key key;
     // token 검증없이 통과하는 endpoint 등록
     private static final List<String> WHITE_LIST_PATHS = List.of(
-        "/api/v1/**",
+        "/api/v1/users/signup",
+        "/api/v1/users/login",
         "/health/alive"
     );
 
@@ -93,6 +94,10 @@ public class JwtAuthentication implements GlobalFilter {
             String role = claims.get("role", String.class);
             System.out.println(">>>> JwtAuthenticationFilter claims get role : " + role);
 
+            Long userId = claims.get("user_id", Long.class);
+            System.out.println(">>>> JwtAuthenticationFilter claims get user_id : " + userId);
+
+
             // X-USER-Id 변수로 email 값과 Role 추가
             // X는 custom header를 나타내는 접두사입니다. X-USER-Id는 사용자 이메일을 나타내는 커스텀 헤더
 
@@ -101,8 +106,9 @@ public class JwtAuthentication implements GlobalFilter {
                 .request(builder -> builder
                     .header("X-USER-Email", email)
                     .header("X-USER-Role", role)
+                    .header("X-USER-ID", String.valueOf(userId))
                 ).build();
-
+                
 
             return chain.filter(modifiedExchange);
 

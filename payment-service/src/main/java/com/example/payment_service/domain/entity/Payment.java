@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-
 @Entity
 @Table(name = "payments")
 @Getter
@@ -22,6 +21,12 @@ public class Payment {
     // user_invoice_id는 외부 서비스의 식별자 값만 저장
     @Column(name = "user_invoice_id", nullable = false)
     private Long invoiceId;
+
+    @Column(name = "invoice_name", nullable = false)
+    private String invoiceName;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
@@ -41,11 +46,14 @@ public class Payment {
 
     protected Payment() {}
 
-    public Payment(Long invoiceId, LocalDate dueDate, BigDecimal amount, PaymentStatus status) {
+    // 기술적 명분: 서비스 로직에서 결제 생성 시 필수 정보(userId, invoiceName)를 포함하기 위해 생성자 파라미터 최적화
+    public Payment(Long invoiceId, Long userId, String invoiceName, LocalDate dueDate, BigDecimal amount) {
         this.invoiceId = invoiceId;
+        this.userId = userId;
+        this.invoiceName = invoiceName;
         this.dueDate = dueDate;
         this.amount = amount;
-        this.status = status;
+        this.status = PaymentStatus.PENDING;
     }
 
     @PrePersist
@@ -61,6 +69,4 @@ public class Payment {
             this.paidAt = null;
         }
     }
-
-    // getters/setters (또는 Lombok)
 }

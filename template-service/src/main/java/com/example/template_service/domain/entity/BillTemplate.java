@@ -1,19 +1,31 @@
 package com.example.template_service.domain.entity;
 
 import com.example.template_service.domain.enumtype.TemplateCategory;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "bill_template")
 public class BillTemplate {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "template_id")
     private Long templateId;
+
+    @Column(nullable = false, length = 100)
     private String name;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TemplateCategory category;
+
+    @Column(name = "is_system", nullable = false)
     private Boolean isSystem;
 
-    public BillTemplate() {
+    protected BillTemplate() {
     }
 
-    public BillTemplate(Long templateId, String name, TemplateCategory category, Boolean isSystem) {
-        this.templateId = templateId;
+    public BillTemplate(String name, TemplateCategory category, Boolean isSystem) {
         this.name = name;
         this.category = category;
         this.isSystem = isSystem;

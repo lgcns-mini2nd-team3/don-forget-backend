@@ -5,6 +5,7 @@ import com.example.template_service.dto.request.TemplateCreateRequest;
 import com.example.template_service.dto.request.TemplateUpdateRequest;
 import com.example.template_service.dto.response.TemplateResponse;
 import com.example.template_service.service.TemplateService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/templates")
+@CrossOrigin(origins = "http://localhost:3000")
 public class TemplateController {
 
     private final TemplateService templateService;
@@ -39,15 +41,15 @@ public class TemplateController {
     }
 
     @PostMapping
-    public ResponseEntity<TemplateResponse> createTemplate(@RequestBody TemplateCreateRequest request) {
+    public ResponseEntity<TemplateResponse> createTemplate(@Valid @RequestBody TemplateCreateRequest request) {
         BillTemplate billTemplate = templateService.createTemplate(request);
-        return ResponseEntity.ok(TemplateResponse.from(billTemplate));
+        return ResponseEntity.status(201).body(TemplateResponse.from(billTemplate));
     }
 
     @PatchMapping("/{templateId}")
     public ResponseEntity<TemplateResponse> updateTemplate(
             @PathVariable Long templateId,
-            @RequestBody TemplateUpdateRequest request
+            @Valid @RequestBody TemplateUpdateRequest request
     ) {
         BillTemplate billTemplate = templateService.updateTemplate(templateId, request);
         return ResponseEntity.ok(TemplateResponse.from(billTemplate));
