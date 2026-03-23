@@ -2,6 +2,7 @@ package com.example.my_bill_service.ctrl;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,7 @@ public class InvoiceController {
             @RequestBody CreateInvoiceRequest createInvoiceRequest
     ) {
         invoiceService.create(userId, createInvoiceRequest);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // 목록 조회
