@@ -1,10 +1,10 @@
-package com.example.my_bill_service.invoice.dto.response;
+package com.example.my_bill_service.dto.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.example.my_bill_service.invoice.entity.InvoiceEntity;
-import com.example.my_bill_service.invoice.enumtype.RecurrenceCycle;
+import com.example.my_bill_service.entity.InvoiceEntity;
+import com.example.my_bill_service.enumtype.RecurrenceCycle;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
