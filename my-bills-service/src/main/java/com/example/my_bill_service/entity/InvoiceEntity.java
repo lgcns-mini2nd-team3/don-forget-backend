@@ -1,7 +1,9 @@
 package com.example.my_bill_service.entity;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 
+import com.example.my_bill_service.dto.request.UpdateInvoiceRequest;
 import com.example.my_bill_service.global.common.BaseEntity;
 import com.example.my_bill_service.enumtype.RecurrenceCycle;
 
@@ -13,20 +15,19 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Builder
 @Getter
 @Entity
 @Table(name = "invoices")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class InvoiceEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_invoice_id")
+    @Column(name = "invoice_id")
     private Long id;
 
     @Column(name = "user_id", nullable = false)
@@ -34,6 +35,9 @@ public class InvoiceEntity extends BaseEntity {
 
     @Column(name = "template_id", nullable = false)
     private Long templateId;
+
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "amount")
     private Integer amount;
@@ -60,30 +64,15 @@ public class InvoiceEntity extends BaseEntity {
     @Column(name = "notify_before", nullable = false)
     private Integer notifyBefore;
 
-    @Builder
-    public InvoiceEntity(Long userId, Long templateId, Integer amount, Integer dueDay,
-                   Boolean isRecurring, RecurrenceCycle recurCycle,
-                   LocalDate recurStart, LocalDate recurEnd, Integer notifyBefore) {
-        this.userId = userId;
-        this.templateId = templateId;
-        this.amount = amount;
-        this.dueDay = dueDay;
-        this.isRecurring = isRecurring;
-        this.recurCycle = recurCycle;
-        this.recurStart = recurStart;
-        this.recurEnd = recurEnd;
-        this.notifyBefore = notifyBefore;
-    }
-
-    public void update(Integer amount, Integer dueDay, Boolean isRecurring,
-                       RecurrenceCycle recurCycle, LocalDate recurStart,
-                       LocalDate recurEnd, Integer notifyBefore) {
-        this.amount = amount;
-        this.dueDay = dueDay;
-        this.isRecurring = isRecurring;
-        this.recurCycle = recurCycle;
-        this.recurStart = recurStart;
-        this.recurEnd = recurEnd;
-        this.notifyBefore = notifyBefore;
+    public void update(UpdateInvoiceRequest request) {
+        if (request.getName() != null) this.name = request.getName();
+        if (request.getAmount() != null) this.amount = request.getAmount();
+        if (request.getDueDay() != null) this.dueDay = request.getDueDay();
+        if (request.getIssueDay() != null) this.issueDay = request.getIssueDay();
+        if (request.getIsRecurring() != null) this.isRecurring = request.getIsRecurring();
+        if (request.getRecurCycle() != null) this.recurCycle = request.getRecurCycle();
+        if (request.getRecurStart() != null) this.recurStart = request.getRecurStart();
+        if (request.getRecurEnd() != null) this.recurEnd = request.getRecurEnd();
+        if (request.getNotifyBefore() != null) this.notifyBefore = request.getNotifyBefore();
     }
 }

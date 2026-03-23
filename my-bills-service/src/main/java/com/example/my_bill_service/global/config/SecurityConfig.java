@@ -21,7 +21,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000")); // res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-        corsConfiguration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS")); // res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+        corsConfiguration.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS")); // res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
         corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-USER-ID")); // res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
         corsConfiguration.setExposedHeaders(List.of("Authorization")); // headers.add("Access-Control-Expose-Headers", "Authorization, Refresh-Token");
         corsConfiguration.setAllowCredentials(true); // res.setHeader("Access-Control-Allow-Credentials", "true");
