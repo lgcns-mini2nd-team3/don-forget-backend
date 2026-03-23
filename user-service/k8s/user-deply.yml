@@ -30,13 +30,13 @@ spec:
               name:
               key:
           
-        - name: DB_PASSWORD
+        - name: DB_ADMIN
           valueForm:
             secretRefKey:
               name:
               key:
 
-        - name: DB_URL
+        - name: DB_PASSWORD
           valueForm:
             secretRefKey:
               name:
