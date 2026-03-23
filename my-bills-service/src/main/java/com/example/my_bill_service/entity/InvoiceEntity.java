@@ -27,7 +27,7 @@ public class InvoiceEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_invoice_id")
+    @Column(name = "invoice_id")
     private Long id;
 
     @Column(name = "user_id", nullable = false)
