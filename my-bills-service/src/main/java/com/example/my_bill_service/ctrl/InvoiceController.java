@@ -24,7 +24,7 @@ public class InvoiceController {
     private final InvoiceService invoiceService;
 
     // 등록
-    @Operation(summary = "청구서 등록", description = "새로운 나의 청구서 등록")
+    @Operation(summary = "청구서 등록", description = "신규 청구서 등록")
     @PostMapping
     public ResponseEntity<?> createInvoice(
             @RequestHeader("X-USER-ID") Long userId,
@@ -35,7 +35,7 @@ public class InvoiceController {
     }
 
     // 목록 조회
-    @Operation(summary = "청구서 목록 조회", description = "사용자의 청구서 목록 조회")
+    @Operation(summary = "청구서 목록 조회", description = "특정 사용자의 청구서 목록 조회")
     @GetMapping
     public ResponseEntity<?> getMyBills(
             @RequestHeader("X-USER-ID") Long userId
@@ -44,7 +44,7 @@ public class InvoiceController {
     }
 
     // 단건 조회
-    @Operation(summary = "청구서 단건 조회", description = "청구서ID로 단건 조회")
+    @Operation(summary = "청구서 단건 조회", description = "청구서 ID 기반 단건 조회")
     @GetMapping("/{invoiceId}")
     public ResponseEntity<?> getInvoiceDetail(
             @RequestHeader("X-USER-ID") Long userId,
@@ -54,7 +54,7 @@ public class InvoiceController {
     }
 
     // 수정
-    @Operation(summary = "청구서 수정", description = "기존 청구서 정보와 반복/알림 규칙 수정")
+    @Operation(summary = "청구서 수정", description = "청구서 ID 기반 기존 정보 및 반복/알림 규칙 수정")
     @PatchMapping("/{invoiceId}")
     public ResponseEntity<?> updateInvoice(
             @RequestHeader("X-USER-ID") Long userId,
@@ -66,7 +66,7 @@ public class InvoiceController {
     }
 
     // 삭제
-    @Operation(summary = "청구서 삭제", description = "청구서 삭제(soft delete)")
+    @Operation(summary = "청구서 삭제", description = "청구서 ID 기반 삭제(soft delete)")
     @DeleteMapping("/{invoiceId}")
     public ResponseEntity<?> deleteInvoice(
             @RequestHeader("X-USER-ID") Long userId,
@@ -77,7 +77,7 @@ public class InvoiceController {
     }
 
     // 알림 대상자 리스트
-    @Operation(summary = "알림 대상자 조회", description = "알림 발송 대상자 리스트 조회")
+    @Operation(summary = "알림 대상자 목록 조회", description = "알림 발송 대상자 목록 조회")
     @GetMapping("/internal/notifications/targets")
     public ResponseEntity<List<NotificationTargetResponse>> getNotificationTargets() {
         return ResponseEntity.ok(invoiceService.getNotificationTargets());
