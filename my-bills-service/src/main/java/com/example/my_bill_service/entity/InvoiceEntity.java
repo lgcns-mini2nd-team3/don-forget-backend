@@ -1,9 +1,9 @@
-package com.example.my_bill_service.invoice.entity;
+package com.example.my_bill_service.entity;
 
 import java.time.LocalDate;
 
 import com.example.my_bill_service.global.common.BaseEntity;
-import com.example.my_bill_service.invoice.enumtype.RecurrenceCycle;
+import com.example.my_bill_service.enumtype.RecurrenceCycle;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,6 +40,9 @@ public class InvoiceEntity extends BaseEntity {
 
     @Column(name = "due_day", nullable = false)
     private Integer dueDay;
+
+    @Column(name = "issue_day", nullable = false)
+    private Integer issueDay;
 
     @Column(name = "is_recurring", nullable = false)
     private Boolean isRecurring;
