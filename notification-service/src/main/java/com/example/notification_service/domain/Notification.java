@@ -5,7 +5,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "notification")
+@Table(name = "notifications")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -17,7 +17,9 @@ public class Notification {
     private Long notificationId;
 
     private Long userId;    // 수신자 ID
-    private Long paymentId; // 납부 건 ID
+    
+    @Column(name = "payment_id") 
+    private Long invoiceId;
 
     private String type;    // BEFORE_DUE, ON_DUE, OVERDUE
     private String message; // 알림 내용

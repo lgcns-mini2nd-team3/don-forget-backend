@@ -15,7 +15,7 @@ public class BillTargetResponse {
     private Long userId;
     private Long invoiceId;
     private Long templateId;
-    private String billName;
+    private String name;
     private LocalDate dueDate;
     private Integer notifyBefore;
 }

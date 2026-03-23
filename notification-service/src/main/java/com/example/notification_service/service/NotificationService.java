@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,13 +24,21 @@ public class NotificationService {
 
     // 알림 생성
     @Transactional
-    public void createNotification(Long userId, Long paymentId, String type, String message) {
+    public void createNotification(Long userId, Long invoiceId, String type, String message) {
+        LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
+
+        if (notificationRepository.existsByUserIdAndInvoiceIdAndTypeAndSentAtAfter(userId, invoiceId, type, startOfToday)) {
+            return;
+        }
+
         Notification notification = Notification.builder()
-                .userId(userId)
-                .paymentId(paymentId)
-                .type(type)
-                .message(message)
-                .build();
+            .userId(userId)
+            .invoiceId(invoiceId)
+            .type(type)
+            .message(message)
+            .isRead(false)
+            .sentAt(LocalDateTime.now())
+            .build();
 
         notificationRepository.save(notification);
     }

@@ -17,6 +17,10 @@ spring:
       hibernate:
         format_sql: true
 
+feign:
+  bill-service:
+    url: localhost:8083
+
 # 이메일 설정 (추후 구현시)
 # mail:
 #   host: smtp.gmail.com
