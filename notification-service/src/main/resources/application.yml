@@ -1,26 +1,15 @@
-server:
-  port: 8085 # 임의 설정
-
 spring:
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: ${DB_URL:jdbc:mariadb://localhost:3306/don-forget}
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD}
+  application:
+    name: notification-service
 
-  # JPA 설정
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+  cloud:
+    config:
+      uri: http://localhost:8888
+      enabled: true
 
-feign:
-  bill-service:
-    url: localhost:8083
+  profiles:
+    active: local
 
-# 이메일 설정 (추후 구현시)
-# mail:
-#   host: smtp.gmail.com
+  config:
+    import: "optional:configserver:"
+    fail-fast: true
