@@ -26,6 +26,9 @@ public class InvoiceResponse {
     @Schema(description = "납부일", example = "25")
     private Integer dueDay;
 
+    @Schema(description = "발행일", example = "1")
+    private Integer issueDay;
+
     @Schema(description = "반복 여부", example = "true")
     private Boolean isRecurring;
 
@@ -47,6 +50,7 @@ public class InvoiceResponse {
                 .templateId(entity.getTemplateId())
                 .amount(entity.getAmount())
                 .dueDay(entity.getDueDay())
+                .issueDay(entity.getIssueDay())
                 .isRecurring(entity.getIsRecurring())
                 .recurCycle(entity.getRecurCycle())
                 .recurStart(entity.getRecurStart())

@@ -2,6 +2,7 @@ package com.example.my_bill_service.invoice.service;
 
 import com.example.my_bill_service.invoice.dto.request.CreateInvoiceRequest;
 import com.example.my_bill_service.invoice.dto.request.UpdateInvoiceRequest;
+import com.example.my_bill_service.invoice.dto.response.CreatePaymentResponse;
 import com.example.my_bill_service.invoice.dto.response.InvoiceResponse;
 import com.example.my_bill_service.invoice.dto.response.NotificationTargetResponse;
 import com.example.my_bill_service.invoice.entity.InvoiceEntity;
@@ -162,5 +163,24 @@ public class InvoiceService {
                                     .build();
                         })
                         .collect(Collectors.toList());
+    }
+
+    public List<CreatePaymentResponse> getInvoicesByIssueDay(LocalDate today) {
+    int todayDay = today.getDayOfMonth();
+    int lastDay = today.lengthOfMonth();
+
+    List<InvoiceEntity> invoices;
+    if (todayDay == lastDay) {
+        // 말일: issue_day가 오늘보다 크면(=존재하지 않는 날짜면) 말일에 처리
+        invoices = invoiceRepository
+            .findByIssueDayGreaterThanEqualAndDeletedAtIsNull(todayDay);
+    } else {
+        invoices = invoiceRepository
+            .findByIssueDayAndDeletedAtIsNull(todayDay);
+    }
+
+    return invoices.stream()
+        .map(CreatePaymentResponse::from)
+        .toList();
     }
 }

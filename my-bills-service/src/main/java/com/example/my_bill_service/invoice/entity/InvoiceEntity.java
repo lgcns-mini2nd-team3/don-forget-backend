@@ -32,6 +32,9 @@ public class InvoiceEntity extends BaseEntity {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(name = "template_id", nullable = false)
     private Long templateId;
 
@@ -41,6 +44,9 @@ public class InvoiceEntity extends BaseEntity {
     @Column(name = "due_day", nullable = false)
     private Integer dueDay;
 
+    @Column(name = "issue_day", nullable = false)
+    private Integer issueDay;
+    
     @Column(name = "is_recurring", nullable = false)
     private Boolean isRecurring;
 

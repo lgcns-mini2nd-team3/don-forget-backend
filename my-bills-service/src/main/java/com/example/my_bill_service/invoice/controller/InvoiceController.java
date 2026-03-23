@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.my_bill_service.invoice.dto.request.CreateInvoiceRequest;
 import com.example.my_bill_service.invoice.dto.request.UpdateInvoiceRequest;
+import com.example.my_bill_service.invoice.dto.response.CreatePaymentResponse;
+import com.example.my_bill_service.invoice.dto.response.InvoiceResponse;
 import com.example.my_bill_service.invoice.dto.response.NotificationTargetResponse;
 import com.example.my_bill_service.invoice.service.InvoiceService;
 
@@ -91,6 +93,12 @@ public class InvoiceController {
     @GetMapping("/internal/notifications/targets")
     public ResponseEntity<?> getNotificationTargets(){
         return ResponseEntity.ok(invoiceService.getNotificationTargets());
+    }
+
+    @GetMapping("/issue-targets")
+    ResponseEntity<List<CreatePaymentResponse>> getIssueTargets(@RequestParam("today") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate today) {
+        List<CreatePaymentResponse> result = invoiceService.getInvoicesByIssueDay(today);
+        return ResponseEntity.ok(result);
     }
     
 }

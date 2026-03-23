@@ -16,4 +16,9 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long> {
     Optional<InvoiceEntity> findByIdAndUserIdAndDeletedAtIsNull(Long id, Long userId);
 
     List<InvoiceEntity> findAllByDeletedAtIsNull();
+    
+    List<InvoiceEntity> findByUserId(Long userId);
+    List<InvoiceEntity> findByIssueDayAndDeletedAtIsNull(int issueDay);
+
+    List<InvoiceEntity> findByIssueDayGreaterThanEqualAndDeletedAtIsNull(int issueDay);
 }
