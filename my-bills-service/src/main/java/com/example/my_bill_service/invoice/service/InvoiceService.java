@@ -165,18 +165,22 @@ public class InvoiceService {
                         .collect(Collectors.toList());
     }
 
-    public List<CreatePaymentResponse> getInvoicesByIssueDay(int issueDay) {
-        List<CreatePaymentResponse> responses = invoiceRepository.findByIssueDayAndDeletedAtIsNull(issueDay).stream()
-                                            .map(CreatePaymentResponse::from)
-                                            .collect(Collectors.toList());
-                
-        return responses;
+    public List<CreatePaymentResponse> getInvoicesByIssueDay(LocalDate today) {
+    int todayDay = today.getDayOfMonth();
+    int lastDay = today.lengthOfMonth();
+
+    List<InvoiceEntity> invoices;
+    if (todayDay == lastDay) {
+        // 말일: issue_day가 오늘보다 크면(=존재하지 않는 날짜면) 말일에 처리
+        invoices = invoiceRepository
+            .findByIssueDayGreaterThanEqualAndDeletedAtIsNull(todayDay);
+    } else {
+        invoices = invoiceRepository
+            .findByIssueDayAndDeletedAtIsNull(todayDay);
     }
 
-    public List<Long> getInvoiceIdsByUserId(Long userId) {
-        List<Long> invoiceIds = invoiceRepository.findByUserId(userId).stream()
-                                        .map(invoice -> invoice.getId())
-                                        .collect(Collectors.toList());
-        return invoiceIds;
+    return invoices.stream()
+        .map(CreatePaymentResponse::from)
+        .toList();
     }
 }

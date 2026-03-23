@@ -96,16 +96,8 @@ public class InvoiceController {
     }
 
     @GetMapping("/issue-targets")
-    ResponseEntity<List<CreatePaymentResponse>> getIssueTargets(@RequestParam("issueDay") int issueDay){
-        List<CreatePaymentResponse> result = invoiceService.getInvoicesByIssueDay(issueDay);
-        return ResponseEntity.ok(result);
-    }
-
-    // RequestParam부분은 나중에 X-USER-ID 헤더로 변경 예정
-    @GetMapping("/get-invoices")
-    ResponseEntity<List<Long>> getInvoicesByUserId(@RequestHeader("X-USER-ID") String userId){
-
-        List<Long> result = invoiceService.getInvoiceIdsByUserId(Long.valueOf(userId));
+    ResponseEntity<List<CreatePaymentResponse>> getIssueTargets(@RequestParam("today") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate today) {
+        List<CreatePaymentResponse> result = invoiceService.getInvoicesByIssueDay(today);
         return ResponseEntity.ok(result);
     }
     

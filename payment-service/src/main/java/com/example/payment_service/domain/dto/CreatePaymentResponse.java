@@ -11,6 +11,7 @@ import lombok.ToString;
 public class CreatePaymentResponse {
     private Long invoiceId;
     private Long userId;
+    private String name;
     private Integer dueDay;
     private BigDecimal amount;
     private Boolean isRecurring;

@@ -32,6 +32,9 @@ public class InvoiceEntity extends BaseEntity {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(name = "template_id", nullable = false)
     private Long templateId;
 

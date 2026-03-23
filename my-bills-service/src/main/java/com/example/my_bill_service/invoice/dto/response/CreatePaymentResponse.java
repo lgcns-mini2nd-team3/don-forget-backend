@@ -16,6 +16,7 @@ import lombok.ToString;
 public class CreatePaymentResponse {
     private Long invoiceId;
     private Long userId;
+    private String name;
     private Integer dueDay;
     private BigDecimal amount;
     private Boolean isRecurring;
@@ -31,6 +32,7 @@ public class CreatePaymentResponse {
         CreatePaymentResponse response = new CreatePaymentResponse();
         response.invoiceId = entity.getId();
         response.userId = entity.getUserId();
+        response.name = entity.getName();
         response.dueDay = entity.getDueDay();
         response.amount = BigDecimal.valueOf(entity.getAmount());
         response.isRecurring = entity.getIsRecurring();

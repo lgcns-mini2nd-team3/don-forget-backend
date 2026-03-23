@@ -23,8 +23,8 @@ public class Payment {
     @Column(name = "user_invoice_id", nullable = false)
     private Long invoiceId;
 
-    // @Column(name = "invoice_name", nullable = false)
-    // private String invoiceName;
+    @Column(name = "invoice_name", nullable = false)
+    private String invoiceName;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
@@ -48,9 +48,10 @@ public class Payment {
 
     protected Payment() {}
     // 나중에 필요하면 invoiceName과 userId를 생성자에 추가할 수 있음
-    public Payment(Long invoiceId, Long userId, LocalDate dueDate, BigDecimal amount) {
+    public Payment(Long invoiceId, Long userId, String invoiceName, LocalDate dueDate, BigDecimal amount) {
         this.invoiceId = invoiceId;
         this.userId = userId;
+        this.invoiceName = invoiceName;
         this.dueDate = dueDate;
         this.amount = amount;
         this.status = PaymentStatus.PENDING;
