@@ -21,8 +21,8 @@ public class NotificationScheduler {
     private final BillServiceClient billServiceClient;
     private final NotificationService notificationService;
 
-    // @Scheduled(cron = "0 0 9 * * *") // 기존 코드 - 매일 오전 9시에 실행
-    @Scheduled(fixedDelay = 10000)      // 테스트 - 10,000ms = 10초마다 실행
+    @Scheduled(cron = "0 0 9 * * *") // 기존 코드 - 매일 오전 9시에 실행
+    // @Scheduled(fixedDelay = 10000)      // 테스트 - 10,000ms = 10초마다 실행
     public void run() {
         log.info("⏰ 알림 자동 생성 스케줄러 실행 중...");
 
