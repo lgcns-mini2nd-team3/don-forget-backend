@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.payment_service.domain.dto.CreatePaymentResponse;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @FeignClient(name = "my-bill-service") // my-bill-service의 application.yml에서 설정한 spring.application.name

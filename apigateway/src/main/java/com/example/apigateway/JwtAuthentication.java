@@ -29,8 +29,8 @@ public class JwtAuthentication implements GlobalFilter {
     private Key key;
     // token 검증없이 통과하는 endpoint 등록
     private static final List<String> WHITE_LIST_PATHS = List.of(
-        "/api/v1/auth/signup",
-        "/api/v1/auth/login",
+        "/api/v1/users/signup",
+        "/api/v1/users/login",
         "/health/alive"
     );
 
