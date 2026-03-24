@@ -1,0 +1,49 @@
+
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: rabbitmq-deployment
+  namespace: don-forget
+    
+
+spec: 
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+
+    spec:
+
+      containers:
+      - name: rabbitmq-container
+
+        image: rabbitmq:3-management
+        ports:
+          - containerPort: 5672
+
+
+
+
+---  
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-service
+  namespace: don-forget
+
+spec: 
+  type: ClusterIP
+  ports:
+  - port: 5672
+    targetPort: 5672
+
+  selector:
+    app: rabbitmq      #selector의 name
