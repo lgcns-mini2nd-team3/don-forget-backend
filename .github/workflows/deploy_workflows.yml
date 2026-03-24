@@ -1,4 +1,4 @@
-name : mas k8s pod deploy
+name : don-forget deploy
 
 on:
   # main이라는 브랜치에 push 또는 pull request가 발생했을 때 파이프라인이 동작 
@@ -42,10 +42,36 @@ jobs:
       - name: aws ecr login
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name : check running infra
-        run: | 
-          kubectl get all -n lgcns
-          kubectl wait --for=condition=Ready pods --all -n lgcns --timeout=180s
+      # - name : check running infra
+      #   run: | 
+      #     kubectl get all -n lgcns
+      #     kubectl wait --for=condition=Ready pods --all -n lgcns --timeout=180s
+      - name: Check infra components
+        run: |
+          set -e
+          # ingress 확인
+          if kubectl get deployment don-forget-ingress -n lgcns >/dev/null 2>&1; then
+            echo "Ingress already exists, skipping..."
+          else
+            kubectl apply -f ./infra/don-forget-ingress.yml
+            kubectl rollout status deployment/don-forget-ingress -n lgcns --timeout=180s
+          fi
+
+          # rabbitmq 확인
+          if kubectl get deployment rabbitmq -n lgcns >/dev/null 2>&1; then
+            echo "RabbitMQ already exists, skipping..."
+          else
+            kubectl apply -f ./infra/don-forget-rabbitMQ.yml
+            kubectl rollout status deployment/rabbitmq-deployment -n lgcns --timeout=180s
+          fi
+
+          # redis 확인
+          if kubectl get deployment redis -n lgcns >/dev/null 2>&1; then
+            echo "Redis already exists, skipping..."
+          else
+            kubectl apply -f ./infra/don-forget-redis.yml
+            kubectl rollout status deployment/redis-deployment -n lgcns --timeout=180s
+          fi
 
       # config server
       - name : configserver image build and push to ecr
