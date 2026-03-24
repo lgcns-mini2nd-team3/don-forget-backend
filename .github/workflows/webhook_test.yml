@@ -1,0 +1,46 @@
+name: Discord Notification
+
+on:
+  push:
+    branches:
+      - '**'  # 모든 브랜치에서 감지
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord Notification
+        run: |
+          curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL1 }}" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "username": "GitHub",
+            "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+            "embeds": [{
+              "color": 3447003,
+              "title": "📤 Push Event",
+              "fields": [
+                {
+                  "name": "Repository",
+                  "value": "${{ github.repository }}",
+                  "inline": true
+                },
+                {
+                  "name": "Branch",
+                  "value": "${{ github.ref_name }}",
+                  "inline": true
+                },
+                {
+                  "name": "Commit",
+                  "value": "${{ github.sha }}",
+                  "inline": false
+                },
+                {
+                  "name": "Author",
+                  "value": "${{ github.actor }}",
+                  "inline": true
+                }
+              ],
+              "url": "${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
+            }]
+          }'
