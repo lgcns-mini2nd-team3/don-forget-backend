@@ -13,6 +13,7 @@ import com.example.my_bill_service.dto.request.CreateInvoiceRequest;
 import com.example.my_bill_service.dto.request.UpdateInvoiceRequest;
 import com.example.my_bill_service.dto.response.CreatePaymentResponse;
 import com.example.my_bill_service.dto.response.NotificationTargetResponse;
+import com.example.my_bill_service.dto.response.InvoiceResponse; // 추가
 import com.example.my_bill_service.service.InvoiceService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,6 +37,14 @@ public class InvoiceController {
     ) {
         invoiceService.create(userId, createInvoiceRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    // 기술적 명분: 외부 서비스(Payment)로부터 수집된 고지서 데이터를 내부 시스템에 등록하기 위한 창구 추가
+    @Operation(summary = "외부 고지서 수신", description = "타 서비스로부터 연동된 고지서 정보 저장")
+    @PostMapping("/external")
+    public ResponseEntity<Void> receiveExternalInvoice(@RequestBody InvoiceResponse invoiceResponse) {
+        invoiceService.registerExternal(invoiceResponse);
+        return ResponseEntity.ok().build();
     }
 
     // 목록 조회

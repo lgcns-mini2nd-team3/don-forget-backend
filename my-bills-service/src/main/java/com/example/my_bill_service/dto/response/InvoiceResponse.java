@@ -2,17 +2,19 @@ package com.example.my_bill_service.dto.response;
 
 import java.time.LocalDate;
 
-import org.springframework.cglib.core.Local;
-
 import com.example.my_bill_service.entity.InvoiceEntity;
 import com.example.my_bill_service.enumtype.RecurrenceCycle;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
+@NoArgsConstructor // 역직렬화를 위해 필수
+@AllArgsConstructor // Builder 규격 유지
 @Schema(description = "청구서 응답 DTO")
 public class InvoiceResponse {
 
@@ -55,9 +57,15 @@ public class InvoiceResponse {
     @Schema(description = "청구 상태", example = "연체: OVERDUE, UNPAID: 미납, PAID: 납부완료")
     private String status;
 
+    // 기술적 명분: 외부 서비스와의 통신 시 주기 정보를 문자열로 안전하게 변환하여 제공
+    public String getRecurCycleString() {
+        return recurCycle != null ? recurCycle.name() : "MONTHLY";
+    }
+
     public static InvoiceResponse from(InvoiceEntity entity) {
         return InvoiceResponse.builder()
                 .invoiceId(entity.getId())
+                .userId(entity.getUserId())
                 .templateId(entity.getTemplateId())
                 .name(entity.getName())
                 .amount(entity.getAmount())
@@ -74,14 +82,17 @@ public class InvoiceResponse {
 
     private static String calculateStatus(InvoiceEntity entity){
         LocalDate today = LocalDate.now();
-        int dueDay = entity.getDueDay();
+        Integer dueDay = entity.getDueDay();
 
-        LocalDate dueDate = LocalDate.of(today.getYear(), today.getMonth(), dueDay);
+        if (dueDay == null) return "UNPAID";
+
+        int lastDay = today.lengthOfMonth();
+        int validDay = Math.min(dueDay, lastDay);
+        LocalDate dueDate = today.withDayOfMonth(validDay);
 
         if(today.isAfter(dueDate)){
             return "OVERDUE";
         }
         return "UNPAID";
-        
     }
 }

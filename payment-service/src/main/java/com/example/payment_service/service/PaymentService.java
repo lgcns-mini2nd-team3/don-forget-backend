@@ -10,18 +10,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.payment_service.common.utils.DueDateCalculator;
 import com.example.payment_service.dao.PaymentRepository;
+
+import com.example.payment_service.dao.BillingHistoryRepository;
+import com.example.payment_service.domain.entity.BillingHistory;
 import com.example.payment_service.domain.dto.InvoiceResponse;
 import com.example.payment_service.domain.dto.PayResponseDTO;
 import com.example.payment_service.domain.entity.Payment;
 import com.example.payment_service.domain.entity.PaymentStatus;
 
 import lombok.RequiredArgsConstructor;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class PaymentService {
     private final PaymentRepository paymentRepository;
+    private final BillingHistoryRepository billingHistoryRepository;
     private final OpenFeignClient openFeignClient;
 
     @Transactional(readOnly = true)
@@ -42,12 +45,27 @@ public class PaymentService {
         return PayResponseDTO.fromEntity(payment);
     }
 
-    // 기술적 명분: 결제 완료 상태 업데이트 처리를 위한 메서드
+    // 기술적 명분: 결제 완료 상태 업데이트 및 과금 이력(History) 생성을 위한 메서드
     @Transactional
     public PayResponseDTO markPaid(Long paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new RuntimeException("Payment not found with id: " + paymentId));
+        
+        // 기술적 정합성: 상태 변경과 동시에 영수증(BillingHistory) 데이터를 이력 테이블에 생성
         payment.update(PaymentStatus.PAID);
+
+        BillingHistory history = BillingHistory.builder()
+                .invoiceId(payment.getInvoiceId())
+                .name(payment.getInvoiceName())
+                .amount(payment.getAmount())
+                .dueDay(payment.getDueDate().getDayOfMonth())
+                .billType("EXTERNAL")
+                .status("PAID")
+                .notifyBefore(3)
+                .build();
+                
+        billingHistoryRepository.save(history);
+
         return PayResponseDTO.fromEntity(payment);  
     }
 
@@ -73,13 +91,29 @@ public class PaymentService {
      */
     @Transactional
     public void registerExternalBilling(Long invoiceId, java.math.BigDecimal amount, LocalDate dueDate) {
+        Long userId = 1L;
+
         if (paymentRepository.existsByInvoiceIdAndDueDate(invoiceId, dueDate)) {
             return;
         }
 
-        // 기술적 정합성: dev 브랜치 엔티티 생성자 규격 준수 (invoiceId, userId, invoiceName, dueDate, amount)
-        Payment payment = new Payment(invoiceId, 0L, "외부 고지서", dueDate, amount);
+        Payment payment = new Payment(invoiceId, userId, "외부 고지서", dueDate, amount);
         paymentRepository.save(payment);
+
+        InvoiceResponse syncDto = InvoiceResponse.builder()
+                .invoiceId(invoiceId)
+                .userId(userId)
+                .name("외부 고지서")
+                .amount(amount.intValue())
+                .dueDay(dueDate.getDayOfMonth())
+                .issueDay(LocalDate.now().getDayOfMonth()) 
+                .isRecurring(true) 
+                .notifyBefore(3) 
+                .status("UNPAID") 
+                .recurStart(LocalDate.now()) 
+                .build();
+        
+        openFeignClient.sendToMyBill(syncDto);
     }
     
     /**
