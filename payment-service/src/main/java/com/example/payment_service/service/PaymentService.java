@@ -30,8 +30,7 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public List<PayResponseDTO> findPaymentsByUser(Long userId) {
         System.out.println("PaymentService: Fetching payments for userId=" + userId);
-        List<Long> invoiceIds = openFeignClient.getInvoicesByUserId(userId);
-        List<Payment> payments = paymentRepository.findByInvoiceIdIn(invoiceIds);
+        List<Payment> payments = paymentRepository.findByUserId(userId);
         return payments.stream()
                 .map(PayResponseDTO::fromEntity)
                 .collect(Collectors.toList());

@@ -1,0 +1,171 @@
+name : mas k8s pod deploy
+
+on:
+  # main이라는 브랜치에 push 또는 pull request가 발생했을 때 파이프라인이 동작 
+  push:
+    branches:
+      - feature/payment-service
+  pull_request:
+    branches:
+      - feature/payment-service
+
+
+#내부에 job들은 여러개 있을 수 있음      
+jobs:
+  build-and-deploy: # job의 이름(build-and-deploy는 내가 지은 이름)
+    
+    #runner
+    runs-on: ubuntu-latest # 어떤 환경에서 job이 실행될 것인지(ubuntu-latest, windows-latest, macos-latest)
+    # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#available-github-hosted-runners-and-hardware-resources
+    steps:
+        # 소스코드 체크아웃
+      - name: Check out github
+        # user는 약속되어 있는 명령어를 가져와 사용하는 것
+        uses: actions/checkout@v2 # github에서 코드를 체크아웃하는 액션
+        # 리눅스 환경에서 kubectl을 설치하기 위한 액션
+      - name : install kubectl
+        uses: azure/setup-kubectl@v3 
+        with:
+          version: 'v1.34.1' # kubectl의 버전
+
+        # aws 인증을 위한 액션(git의 secrets에 작성한 AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY를 사용)
+      - name : aws configure
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: aws eks cluster update
+        run: aws eks update-kubeconfig --region ap-northeast-2 --name don-forget-cluster
+
+      - name: aws ecr login
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name : check running infra
+        run: | 
+          kubectl get all -n lgcns
+          kubectl wait --for=condition=Ready pods --all -n lgcns --timeout=180s
+
+      # config server
+      - name : configserver image build and push to ecr
+        env:
+          ECR_REGISTRY: 313984758699.dkr.ecr.ap-northeast-2.amazonaws.com
+          ECR_REPOSITORY: config-server
+          IMAGE_TAG: latest
+        run: | 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./config-server/Dockerfile ./config-server
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+        # config-server-deployment는 configserver-deployment.yml의 metadata의 name임
+      - name : eks kubectl configserver
+        run: | 
+          kubectl apply -f ./config-server/k8s/configserver-deployment.yml
+          kubectl rollout restart deployment configserver-deployment -n lgcns
+
+      # apigateway
+      - name : apigateway image build and push to ecr
+        env:
+          ECR_REGISTRY: 313984758699.dkr.ecr.ap-northeast-2.amazonaws.com
+          ECR_REPOSITORY: apigateway
+          IMAGE_TAG: latest
+        run: | 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./apigateway/Dockerfile ./apigateway
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+        # apigateway-deployment는 apigateway-deployment.yml의 metadata의 name임
+      - name : eks kubectl apigateway
+        run: | 
+          kubectl apply -f ./apigateway/k8s/apigateway-deployment.yml
+          kubectl rollout restart deployment apigateway-deployment -n lgcns
+
+      # user
+      - name : user image build and push to ecr
+        env:
+          ECR_REGISTRY: 313984758699.dkr.ecr.ap-northeast-2.amazonaws.com
+          ECR_REPOSITORY: user-service
+          IMAGE_TAG: latest
+        run: | 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./user-service/Dockerfile ./user-service
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name : eks kubectl user
+        run: | 
+          kubectl apply -f ./user-service/k8s/user-deployment.yml
+          kubectl rollout restart deployment user-deployment -n lgcns
+
+      # my-bill-service
+      - name : my-bill image build and push to ecr
+        env:
+          ECR_REGISTRY: 313984758699.dkr.ecr.ap-northeast-2.amazonaws.com
+          ECR_REPOSITORY: my-bill-service
+          IMAGE_TAG: latest
+        run: | 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./my-bills-service/Dockerfile ./my-bills-service
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name : eks kubectl my-bill-service
+        run: | 
+          kubectl apply -f ./my-bills-service/k8s/my-bill-service-deployment.yml
+          kubectl rollout restart deployment my-bill-deployment -n lgcns
+
+      # payment-service
+      - name : payment image build and push to ecr
+        env:
+          ECR_REGISTRY: 313984758699.dkr.ecr.ap-northeast-2.amazonaws.com
+          ECR_REPOSITORY: payment-service
+          IMAGE_TAG: latest
+        run: | 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./payment-service/Dockerfile ./payment-service
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name : eks kubectl payment-service
+        run: | 
+          kubectl apply -f ./payment-service/k8s/payment-deployment.yml
+          kubectl rollout restart deployment payment-deployment -n lgcns
+
+      # external-billing-service
+      - name : external-billing image build and push to ecr
+        env:
+          ECR_REGISTRY: 313984758699.dkr.ecr.ap-northeast-2.amazonaws.com
+          ECR_REPOSITORY: external-billing-service
+          IMAGE_TAG: latest
+        run: | 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./external-billing-service/Dockerfile ./external-billing-service
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name : eks kubectl external-billing-service
+        run: | 
+          kubectl apply -f ./external-billing-service/k8s/external-billing-deployment.yml
+          kubectl rollout restart deployment external-billing-deployment -n lgcns
+
+      # notification-service
+      - name : notification image build and push to ecr
+        env:
+          ECR_REGISTRY: 313984758699.dkr.ecr.ap-northeast-2.amazonaws.com
+          ECR_REPOSITORY: notification-service
+          IMAGE_TAG: latest
+        run: | 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./notification-service/Dockerfile ./notification-service
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name : eks kubectl notification-service
+        run: | 
+          kubectl apply -f ./notification-service/k8s/notification-deployment.yml
+          kubectl rollout restart deployment notification-deployment -n lgcns
+
+      # template-service
+      - name : template image build and push to ecr
+        env:
+          ECR_REGISTRY: 313984758699.dkr.ecr.ap-northeast-2.amazonaws.com
+          ECR_REPOSITORY: template-service
+          IMAGE_TAG: latest
+        run: | 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./template-service/Dockerfile ./template-service
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name : eks kubectl template-service
+        run: | 
+          kubectl apply -f ./template-service/k8s/template-deployment.yml
+          kubectl rollout restart deployment template-deployment -n lgcns
+
