@@ -50,11 +50,10 @@ jobs:
         run: |
           set -e
           # ingress 확인
-          if kubectl get deployment don-forget-ingress -n lgcns >/dev/null 2>&1; then
+          if kubectl get Ingress don-forget-ingress -n lgcns >/dev/null 2>&1; then
             echo "Ingress already exists, skipping..."
           else
             kubectl apply -f ./infra/don-forget-ingress.yml
-            kubectl rollout status deployment/don-forget-ingress -n lgcns --timeout=180s
           fi
 
           # rabbitmq 확인
