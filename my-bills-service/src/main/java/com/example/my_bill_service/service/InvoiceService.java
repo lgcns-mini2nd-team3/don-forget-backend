@@ -182,7 +182,7 @@ public class InvoiceService {
         }
     }
 
-    public List<CreatePaymentResponse> getInvoicesByIssueDay(LocalDate today) {
+    public List<InvoiceResponse> getInvoicesByIssueDay(LocalDate today) {
         int todayDay = today.getDayOfMonth();
         int lastDay = today.lengthOfMonth();
 
@@ -197,7 +197,7 @@ public class InvoiceService {
         }
 
         return invoices.stream()
-            .map(CreatePaymentResponse::from)
+            .map(InvoiceResponse::from)
             .toList();
     }
 }
