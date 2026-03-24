@@ -131,7 +131,7 @@ jobs:
 
       - name : eks kubectl my-bill-service
         run: | 
-          kubectl apply -f ./my-bills-service/k8s/my-bill-service-deployment.yml
+          kubectl apply -f ./my-bills-service/k8s/my-bill-deployment.yml
           kubectl rollout restart deployment my-bill-deployment -n lgcns
 
       # payment-service
