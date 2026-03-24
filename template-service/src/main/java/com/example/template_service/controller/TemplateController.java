@@ -7,6 +7,7 @@ import com.example.template_service.dto.response.TemplateResponse;
 import com.example.template_service.service.TemplateService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,12 +42,14 @@ public class TemplateController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TemplateResponse> createTemplate(@Valid @RequestBody TemplateCreateRequest request) {
         BillTemplate billTemplate = templateService.createTemplate(request);
         return ResponseEntity.status(201).body(TemplateResponse.from(billTemplate));
     }
 
     @PatchMapping("/{templateId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TemplateResponse> updateTemplate(
             @PathVariable Long templateId,
             @Valid @RequestBody TemplateUpdateRequest request
@@ -56,6 +59,7 @@ public class TemplateController {
     }
 
     @DeleteMapping("/{templateId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteTemplate(@PathVariable Long templateId) {
         templateService.deleteTemplate(templateId);
         return ResponseEntity.noContent().build();
