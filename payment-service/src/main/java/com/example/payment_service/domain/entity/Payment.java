@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-
 @Entity
 @Table(name = "payments")
 @Getter
@@ -29,7 +28,6 @@ public class Payment {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-
     @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
 
@@ -47,7 +45,8 @@ public class Payment {
     private LocalDateTime createdAt;
 
     protected Payment() {}
-    // 나중에 필요하면 invoiceName과 userId를 생성자에 추가할 수 있음
+
+    // 기술적 명분: 서비스 로직에서 결제 생성 시 필수 정보(userId, invoiceName)를 포함하기 위해 생성자 파라미터 최적화
     public Payment(Long invoiceId, Long userId, String invoiceName, LocalDate dueDate, BigDecimal amount) {
         this.invoiceId = invoiceId;
         this.userId = userId;
@@ -70,6 +69,4 @@ public class Payment {
             this.paidAt = null;
         }
     }
-
-    // getters/setters (또는 Lombok)
 }
