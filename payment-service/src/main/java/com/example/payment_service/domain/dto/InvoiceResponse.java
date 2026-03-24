@@ -1,4 +1,4 @@
-﻿package com.example.payment_service.domain.dto;
+package com.example.payment_service.domain.dto;
 
 import java.time.LocalDate;
 import lombok.Builder;

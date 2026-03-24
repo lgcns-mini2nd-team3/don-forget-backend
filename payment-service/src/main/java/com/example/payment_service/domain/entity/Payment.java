@@ -8,7 +8,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "payments")
+@Table(name = "payments",
+        uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uk_payments_invoice_due",
+            columnNames = {"invoice_id", "due_date"}
+        )
+    }
+)
 @Getter
 public class Payment {
 

@@ -2,14 +2,8 @@ spring:
   application:
     name: notification-service
 
-  cloud:
-    config:
-      uri: http://localhost:8888
-      enabled: true
+  config:
+    import: "optional:configserver:http://configserver-service"
 
   profiles:
-    active: local
-
-  config:
-    import: "optional:configserver:"
-    fail-fast: true
+    active: server

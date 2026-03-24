@@ -3,7 +3,7 @@ spring:
     name: template-service
 
   config:
-    import: "optional:configserver:http://localhost:8888"
+    import: "optional:configserver:http://configserver-service"
 
   profiles:
-    active: local
+    active: server

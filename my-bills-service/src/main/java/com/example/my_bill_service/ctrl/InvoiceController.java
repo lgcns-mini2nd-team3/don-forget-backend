@@ -100,8 +100,8 @@ public class InvoiceController {
     // 특정 발행일 기준 청구서 조회
     @Operation(summary = "청구서 발행 대상 조회", description = "특정 issueDay 기준 발행 대상 청구서 조회")
     @GetMapping("/issue-targets")
-    ResponseEntity<List<CreatePaymentResponse>> getIssueTargets(@RequestParam("today") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate today) {
-        List<CreatePaymentResponse> result = invoiceService.getInvoicesByIssueDay(today);
+    ResponseEntity<List<InvoiceResponse>> getIssueTargets(@RequestParam("today") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate today) {
+        List<InvoiceResponse> result = invoiceService.getInvoicesByIssueDay(today);
         return ResponseEntity.ok(result);
     }
 }
