@@ -42,6 +42,26 @@ public class InvoiceService {
         invoiceRepository.save(invoice);
     }
 
+    // 기술적 명분: 페이먼트 서비스로부터 연동된 외부 데이터를 invoices 테이블에 동기화하기 위한 저장 로직 추가
+    @Transactional
+    public void registerExternal(InvoiceResponse dto) {
+        // 기술적 정합성: DTO에서 넘어온 필드를 매핑하고 정기 발행 로직 연동을 위해 isRecurring(true) 강제 부여
+        InvoiceEntity entity = InvoiceEntity.builder()
+                .userId(dto.getUserId() != null && dto.getUserId() != 0L ? dto.getUserId() : 1L)
+                .templateId(dto.getTemplateId() != null ? dto.getTemplateId() : 0L)
+                .name(dto.getName() != null ? dto.getName() : "외부 고지서")
+                .amount(dto.getAmount())
+                .dueDay(dto.getDueDay() != null ? dto.getDueDay() : 1)
+                .issueDay(dto.getIssueDay() != null ? dto.getIssueDay() : 1)
+                .isRecurring(true) // 정기 결제 발행 로직 인식을 위한 정합성 확보
+                .recurCycle(com.example.my_bill_service.enumtype.RecurrenceCycle.MONTHLY) // 주기 필드 NULL 방지
+                .recurStart(dto.getRecurStart() != null ? dto.getRecurStart() : LocalDate.now())
+                .notifyBefore(dto.getNotifyBefore() != null ? dto.getNotifyBefore() : 3)
+                .build();
+
+        invoiceRepository.save(entity);
+    }
+
     // 목록 조회
     @Transactional(readOnly = true)
     public List<InvoiceResponse> getList(Long userId) {
@@ -163,21 +183,21 @@ public class InvoiceService {
     }
 
     public List<CreatePaymentResponse> getInvoicesByIssueDay(LocalDate today) {
-    int todayDay = today.getDayOfMonth();
-    int lastDay = today.lengthOfMonth();
+        int todayDay = today.getDayOfMonth();
+        int lastDay = today.lengthOfMonth();
 
-    List<InvoiceEntity> invoices;
-    if (todayDay == lastDay) {
-        // 말일: issue_day가 오늘보다 크면(=존재하지 않는 날짜면) 말일에 처리
-        invoices = invoiceRepository
-            .findByIssueDayGreaterThanEqualAndDeletedAtIsNull(todayDay);
-    } else {
-        invoices = invoiceRepository
-            .findByIssueDayAndDeletedAtIsNull(todayDay);
-    }
+        List<InvoiceEntity> invoices;
+        if (todayDay == lastDay) {
+            // 말일: issue_day가 오늘보다 크면(=존재하지 않는 날짜면) 말일에 처리
+            invoices = invoiceRepository
+                .findByIssueDayGreaterThanEqualAndDeletedAtIsNull(todayDay);
+        } else {
+            invoices = invoiceRepository
+                .findByIssueDayAndDeletedAtIsNull(todayDay);
+        }
 
-    return invoices.stream()
-        .map(CreatePaymentResponse::from)
-        .toList();
+        return invoices.stream()
+            .map(CreatePaymentResponse::from)
+            .toList();
     }
 }
