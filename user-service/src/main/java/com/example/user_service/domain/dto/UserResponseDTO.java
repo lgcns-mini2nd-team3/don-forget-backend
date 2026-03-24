@@ -16,13 +16,14 @@ import lombok.ToString;
 public class UserResponseDTO {
     
     private Long userId;
-    private String email, name;
+    private String email, name, role;
 
     public static UserResponseDTO fromEntity(UserEntity entity){
         return UserResponseDTO.builder()
                                 .userId(entity.getUserId())
                                 .email(entity.getEmail())
                                 .name(entity.getName())
+                                .role(entity.getRole())
                                 .build();
 
     }

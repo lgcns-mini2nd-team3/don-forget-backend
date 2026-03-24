@@ -34,6 +34,9 @@ public class UserEntity extends BaseTimeEntity{
     @Column(nullable = false)
     private String name;
 
+    @Column
+    private String role;
+
     public void changePassword(String password) {
         this.password = password;
     }
