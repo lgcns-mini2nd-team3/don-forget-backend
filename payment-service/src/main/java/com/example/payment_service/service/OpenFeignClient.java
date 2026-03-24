@@ -10,7 +10,7 @@ import com.example.payment_service.domain.dto.InvoiceResponse;
 
 import java.util.List;
 
-@FeignClient(name = "my-bill-service") // my-bill-service의 application.yml에서 설정한 spring.application.name
+@FeignClient(name = "my-bill-service", url = "http://my-bill-service:80") // my-bill-service의 application.yml에서 설정한 spring.application.name
 public interface OpenFeignClient {
 
 

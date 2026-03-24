@@ -13,6 +13,7 @@ import com.example.payment_service.dao.PaymentRepository;
 
 import com.example.payment_service.dao.BillingHistoryRepository;
 import com.example.payment_service.domain.entity.BillingHistory;
+import com.example.payment_service.domain.dto.ExternalBillDto;
 import com.example.payment_service.domain.dto.InvoiceResponse;
 import com.example.payment_service.domain.dto.PayResponseDTO;
 import com.example.payment_service.domain.entity.Payment;
@@ -113,6 +114,22 @@ public class PaymentService {
                 .build();
         
         openFeignClient.sendToMyBill(syncDto);
+    }
+
+    public String externalBillReceive(ExternalBillDto dto) {
+        try {
+            LocalDate today = LocalDate.now();
+            int todayDay = today.getDayOfMonth();
+            List<InvoiceResponse> targets = openFeignClient.getIssueTargets(today.toString());
+            YearMonth ym = YearMonth.from(today);
+
+            int dueDay = dto.getDueDay() == null ? todayDay : dto.getDueDay();
+            LocalDate dueDate = DueDateCalculator.calcDueDate(ym, dueDay);
+            registerExternalBilling(dto.getInvoiceId(), dto.getAmount(), dueDate);
+            return "결제 서비스에 외부 고지서 데이터가 성공적으로 등록되었습니다.";
+        } catch (Exception e) {
+            throw new RuntimeException("외부 고지서 데이터 등록 중 오류 발생: " + e.getMessage());
+        }
     }
     
     /**

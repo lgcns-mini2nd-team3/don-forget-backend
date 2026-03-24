@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.payment_service.domain.dto.ExternalBillDto;
 import com.example.payment_service.domain.dto.PayResponseDTO;
 import com.example.payment_service.service.PaymentService;
 
@@ -151,5 +152,11 @@ public class PaymentController {
     public ResponseEntity<Void> deletePayment(@PathVariable("payment_id") Long paymentId) {
         paymentService.deleteById(paymentId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/external")
+    public ResponseEntity<String> sendToPayment(@RequestBody ExternalBillDto dto) {
+        String result = paymentService.externalBillReceive(dto);
+        return ResponseEntity.ok(result);
     }
 }
