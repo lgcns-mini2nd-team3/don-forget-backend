@@ -15,7 +15,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/external")
-@CrossOrigin(origins = "*")
 public class ExternalBillingController {
 
     private final ExternalBillingService billingService;

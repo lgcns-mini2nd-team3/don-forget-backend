@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Payments", description = "납부(결제) 조회/상태 변경 API")
 @RestController
@@ -25,8 +26,31 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     /**
+     * [외부 고지서 수집 데이터 수신
+     * POST /api/v1/payments/external
+     */
+    @Operation(
+        summary = "외부 고지서 데이터 수신",
+        description = "external-billing-service로부터 수집된 고지서 데이터를 전달받아 저장합니다.",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "데이터 수신 및 저장 성공")
+        }
+    )
+    @PostMapping("/external")
+    public ResponseEntity<String> registerExternal(@RequestBody Map<String, Object> payload) {
+
+        paymentService.registerExternalBilling(
+            Long.valueOf(payload.get("billId").toString()),
+            "외부고지서",
+            new java.math.BigDecimal(payload.get("amount").toString()),
+            java.time.LocalDate.parse(payload.get("dueDate").toString())
+        );
+        return ResponseEntity.ok("External billing data received and registered.");
+    }
+
+    /**
      * 특정 사용자의 납부 리스트 조회
-     * GET /api/v1/{user_id}/payments
+     * GET /api/v1/payments/
      */
     @Operation(
         summary = "사용자별 납부 목록 조회",
@@ -43,7 +67,6 @@ public class PaymentController {
     public ResponseEntity<List<PayResponseDTO>> getPaymentsByUser(
             @RequestHeader("X-USER-ID") Long userId) {
         List<PayResponseDTO> result = paymentService.findPaymentsByUser(userId);
-        
         return ResponseEntity.ok(result);
     }
 
@@ -75,12 +98,11 @@ public class PaymentController {
 
     /**
      * 체크리스트: 납부 완료 체크
-     * PATCH /api/v1/payments/{id}/paid
-     * Request body 없음 (서버에서 paidAt=now 처리)
+     * PATCH /api/v1/payments/{payment_id}/paid
      */
     @Operation(
         summary = "납부 완료 처리",
-        description = "납부 상태를 PAID로 변경하고 paidAt을 현재 시각으로 기록합니다. (Request body 없음)",
+        description = "납부 상태를 PAID로 변경하고 paidAt을 현재 시각으로 기록합니다.",
         responses = {
             @ApiResponse(
                 responseCode = "200",
@@ -103,11 +125,10 @@ public class PaymentController {
     /**
      * 체크리스트: 납부 완료 체크 해제
      * PATCH /api/v1/payments/{payment_id}/unpaid
-     * Request body 없음 (서버에서 paidAt=null 처리)
      */
     @Operation(
         summary = "납부 완료 해제",
-        description = "납부 상태를 PENDING으로 되돌리고 paidAt을 null 처리합니다. (Request body 없음)",
+        description = "납부 상태를 PENDING으로 되돌리고 paidAt을 null 처리합니다.",
         responses = {
             @ApiResponse(
                 responseCode = "200",
