@@ -100,8 +100,18 @@ public class InvoiceController {
     // 특정 발행일 기준 청구서 조회
     @Operation(summary = "청구서 발행 대상 조회", description = "특정 issueDay 기준 발행 대상 청구서 조회")
     @GetMapping("/issue-targets")
-    ResponseEntity<List<CreatePaymentResponse>> getIssueTargets(@RequestParam("today") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate today) {
-        List<CreatePaymentResponse> result = invoiceService.getInvoicesByIssueDay(today);
+    ResponseEntity<List<InvoiceResponse>> getIssueTargets(@RequestParam("today") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate today) {
+        List<InvoiceResponse> result = invoiceService.getInvoicesByIssueDay(today);
         return ResponseEntity.ok(result);
+    }
+
+    @Operation(summary = "사용자별 인보이스 ID 목록 조회", description = "FeignClient 상태 동기화용 API")
+    @GetMapping("/user-invoices")
+    public ResponseEntity<List<Long>> getInvoicesByUserId(@RequestParam("userId") Long userId) {
+        // 이미 구현된 getList를 활용해서 ID만 뽑아줍니다.
+        List<Long> invoiceIds = invoiceService.getList(userId).stream()
+                .map(InvoiceResponse::getInvoiceId)
+                .toList();
+        return ResponseEntity.ok(invoiceIds);
     }
 }

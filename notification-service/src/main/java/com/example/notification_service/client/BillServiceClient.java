@@ -10,6 +10,6 @@ import com.example.notification_service.dto.response.BillTargetResponse;
 @FeignClient(name = "bill-service", url = "${feign.bill-service.url}")
 public interface BillServiceClient {
 
-    @GetMapping("/api/v1/my-bills/internal/notifications/targets")
+    @GetMapping("/api/v1/my-bills/notifications/targets")
     List<BillTargetResponse> getNotificationTargets();
 }

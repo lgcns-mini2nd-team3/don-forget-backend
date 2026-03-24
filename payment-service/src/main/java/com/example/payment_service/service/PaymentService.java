@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.payment_service.common.utils.DueDateCalculator;
 import com.example.payment_service.dao.PaymentRepository;
-
 import com.example.payment_service.dao.BillingHistoryRepository;
 import com.example.payment_service.domain.entity.BillingHistory;
 import com.example.payment_service.domain.dto.InvoiceResponse;
@@ -19,6 +18,7 @@ import com.example.payment_service.domain.entity.Payment;
 import com.example.payment_service.domain.entity.PaymentStatus;
 
 import lombok.RequiredArgsConstructor;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -88,22 +88,25 @@ public class PaymentService {
 
     /**
      * 외부 고지서 데이터 연동 (External Billing 전용)
+     * 기술적 명분: 외부 고지서 수집 시 고지서 명칭(invoiceName)을 포함하여 MyBill 서비스의 템플릿 매핑 로직 연동
      */
     @Transactional
-    public void registerExternalBilling(Long invoiceId, java.math.BigDecimal amount, LocalDate dueDate) {
-        Long userId = 1L;
+    public void registerExternalBilling(Long invoiceId, String invoiceName, java.math.BigDecimal amount, LocalDate dueDate) {
+        Long userId = 1L; // 유저 서비스 연동 전 임시 ID
 
         if (paymentRepository.existsByInvoiceIdAndDueDate(invoiceId, dueDate)) {
             return;
         }
 
-        Payment payment = new Payment(invoiceId, userId, "외부 고지서", dueDate, amount);
+        // 기술적 정합성: 하드코딩된 명칭 대신 실제 고지서 이름(전기요금 등)을 저장하여 데이터 정합성 확보
+        Payment payment = new Payment(invoiceId, userId, invoiceName, dueDate, amount);
         paymentRepository.save(payment);
 
+        // MyBill 서비스의 'matchTemplateId' 번역기 로직이 인식할 수 있도록 DTO 구성
         InvoiceResponse syncDto = InvoiceResponse.builder()
                 .invoiceId(invoiceId)
                 .userId(userId)
-                .name("외부 고지서")
+                .name(invoiceName) // "전기요금", "수도세" 등의 명칭이 담겨 전송됨
                 .amount(amount.intValue())
                 .dueDay(dueDate.getDayOfMonth())
                 .issueDay(LocalDate.now().getDayOfMonth()) 
@@ -118,6 +121,7 @@ public class PaymentService {
     
     /**
      * 정기 결제 발행 로직 (본인의 정교한 주기 계산 로직 유지)
+     * 기술적 명분: MyBill 서비스로부터 발행 대상을 조회하여 주기성 결제 데이터를 생성
      */
     @Transactional
     public void issuePaymentsForToday(LocalDate today) {
