@@ -13,11 +13,11 @@ import java.time.LocalDate;
 
 @SpringBootTest(classes = com.example.payment_service.PaymentServiceApplication.class)
 @TestPropertySource(properties = {
- 
+    // 1. 포트 번호를 3307로, DB명을 user_bill로!
     "spring.datasource.url=jdbc:mariadb://localhost:3307/user_bill", 
     "spring.datasource.driver-class-name=org.mariadb.jdbc.Driver",
     "spring.datasource.username=root",
-
+    // 2. 주석 풀고 비밀번호 1234 입력!
     "spring.datasource.password=1234", 
     "spring.jpa.hibernate.ddl-auto=update",
     "spring.cloud.config.enabled=false" // 테스트 시 컨피그 서버 무시
