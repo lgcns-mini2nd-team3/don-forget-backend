@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class InitalDataLoader implements CommandLineRunner{
+public class InitialDataLoader implements CommandLineRunner{
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

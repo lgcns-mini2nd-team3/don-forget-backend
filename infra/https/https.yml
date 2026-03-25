@@ -1,0 +1,45 @@
+
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+
+metadata:
+  name: order-issuer
+  namespace: don-forget
+
+
+spec:
+  acme:
+    # ca server address(인증서 발급진행)
+    server: https://acme-v02.api.letsencrypt.org/directory
+
+    # 인증서 만료심 갱신할 정보 전달 메일 주소
+    email: 
+
+    privateKeySecretRef:
+      name: don-forget-issuer
+    solvers:
+    - http01:
+        ingress:
+          # cert-manager가 nginx 기반의 ingress controller 통신해서 검즘
+          class: nginx 
+
+
+---
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: server-don-forget.shop-tls
+  namespace: don-forget
+
+spec:
+  secretName: server.danielinspire-shop-tls
+  issuerRef: 
+    name: don-forget-issuer
+    kind: ClusterIssuer
+  
+  commonName: server.don-forget.shop
+  dnsNames:
+    # 서브도메인이 여러 개일 경우 나열할 수 있다.
+  - server.don-forget.shop
