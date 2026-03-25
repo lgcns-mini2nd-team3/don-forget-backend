@@ -18,14 +18,14 @@ repositories {
 }
 
 dependencies {
+	// eureka server library
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+	
+	// legacy lib
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-	// config server add lib
-	implementation 'org.springframework.cloud:spring-cloud-config-server'
-	// rabbitmq 
-	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 dependencyManagement{
