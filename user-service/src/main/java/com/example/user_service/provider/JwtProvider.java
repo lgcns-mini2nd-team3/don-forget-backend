@@ -32,11 +32,12 @@ public class JwtProvider {
     }
 
     //access token
-    public String createAt(String email, Long userId){
+    public String createAt(String email, Long userId, String role){
         System.out.println(">>>> access token create : " + email);
         return Jwts.builder()
                     .setSubject(email)
                     .claim("user_id", userId) 
+                    .claim("role", role)
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY))
                     .signWith(getStringKey())
@@ -69,6 +70,19 @@ public class JwtProvider {
 
         return claims.getSubject();
     }
+
+    // role 추출
+    public String getRoleFromToken(String bearerToken) { 
+        String token = bearerToken.replace("Bearer ", "");
+
+        return Jwts.parserBuilder()
+                .setSigningKey(getStringKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("role", String.class);
+    }
+
 
     public String getUserIdFromToken(String token) {
         System.out.println(">>>> getUserIdFromToken token : " + token);
