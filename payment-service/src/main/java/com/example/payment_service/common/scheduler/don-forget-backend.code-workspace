@@ -1,0 +1,39 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../../../../.."
+		},
+		{
+			"path": "../../../../../../../../../apigateway"
+		},
+		{
+			"path": "../../../../../../../../../config-server"
+		},
+		{
+			"path": "../../../../../../../../../eureka"
+		},
+		{
+			"path": "../../../../../../../../../my-bills-service"
+		},
+		{
+			"path": "../../../../../../../../../notification-service"
+		},
+		{
+			"path": "../../../../../../../.."
+		},
+		{
+			"path": "../../../../../../../../../template-service"
+		},
+		{
+			"path": "../../../../../../../../../user-service"
+		},
+		{
+			"path": "../../../../../../../../../external-billing-service"
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "interactive",
+		"java.compile.nullAnalysis.mode": "automatic",
+		"java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms100m -Xlog:disable"
+	}
+}
